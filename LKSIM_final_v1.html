@@ -78,29 +78,256 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 ::selection{background:var(--amber-soft);color:var(--amber)}
 .mono{font-family:var(--font-mono2)}
 
-/* ===== CRT overlays — authentic retro CRT post-processing ===== */
-/* scanlines — the defining CRT feature */
+/* ===== CRT overlays — MAXIMUM OVERDRIVE ===== */
+/* scanlines — thicker, animated drift */
 .crt-scanlines{
   position:fixed;inset:0;pointer-events:none;z-index:9000;
   background:repeating-linear-gradient(0deg,
     rgba(0,0,0,0) 0px,
     rgba(0,0,0,0) 1px,
-    rgba(0,0,0,.3) 2px,
-    rgba(0,0,0,.3) 3px);
-  mix-blend-mode:multiply;opacity:.5;
+    rgba(0,0,0,.35) 2px,
+    rgba(0,0,0,.35) 3px);
+  mix-blend-mode:multiply;opacity:.6;
+  animation:scanDrift 8s linear infinite;
 }
-/* vignette — screen curvature darkening at edges */
+@keyframes scanDrift{0%{background-position:0 0}100%{background-position:0 3px}}
+
+/* vignette — deeper, pulsing */
 .crt-vignette{
   position:fixed;inset:0;pointer-events:none;z-index:9001;
-  background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.5) 100%);
+  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.6) 100%);
+  animation:vignettePulse 3s ease-in-out infinite;
 }
-/* subtle flicker — CRT refresh rate imperfection */
-.crt-flicker{position:fixed;inset:0;pointer-events:none;z-index:8999;background:rgba(255,176,0,.006);animation:flicker 4s infinite}
-@keyframes flicker{0%,100%{opacity:.2}47%{opacity:.2}48%{opacity:.5}49%{opacity:.2}50%{opacity:.3}51%{opacity:.2}}
+@keyframes vignettePulse{0%,100%{opacity:.85}50%{opacity:1}}
 
-/* power-on boot flash */
-.boot-flash{position:fixed;inset:0;background:#fff;z-index:9999;animation:bootflash .9s ease-out forwards;pointer-events:none}
-@keyframes bootflash{0%{opacity:0}3%{opacity:.85}8%{opacity:.15}12%{opacity:.5}20%{opacity:.05}100%{opacity:0;visibility:hidden}}
+/* CRT flicker — more aggressive */
+.crt-flicker{position:fixed;inset:0;pointer-events:none;z-index:8999;background:rgba(255,176,0,.01);animation:flicker 3s infinite}
+@keyframes flicker{0%,100%{opacity:.15}43%{opacity:.15}44%{opacity:.6}45%{opacity:.15}47%{opacity:.4}48%{opacity:.15}72%{opacity:.15}73%{opacity:.35}74%{opacity:.15}}
+
+/* CRT rolling bar — slow horizontal sync distortion */
+.crt-rollbar{
+  position:fixed;left:0;right:0;height:80px;pointer-events:none;z-index:9002;
+  background:linear-gradient(180deg,transparent,rgba(255,176,0,.04) 50%,transparent);
+  animation:rollBar 12s linear infinite;
+}
+@keyframes rollBar{0%{top:-80px}100%{top:100vh}}
+
+/* CRT RGB split — chromatic aberration on the whole screen */
+.crt-rgb-split{
+  position:fixed;inset:0;pointer-events:none;z-index:8998;
+  box-shadow:inset 2px 0 0 rgba(255,0,0,.08),inset -2px 0 0 rgba(0,150,255,.08);
+  mix-blend-mode:screen;
+}
+
+/* EVA warning system — full HUD overlay during transmit, not just stripes */
+.eva-warning{
+  position:fixed;left:0;right:0;pointer-events:none;z-index:9003;
+  opacity:0;transition:opacity .15s ease;
+  overflow:hidden;
+}
+.eva-warning.top{top:0;height:36px;
+  background:linear-gradient(180deg,rgba(255,176,0,.15),transparent);
+  border-bottom:1px solid rgba(255,176,0,.3);
+}
+.eva-warning.bottom{bottom:0;height:36px;
+  background:linear-gradient(0deg,rgba(255,176,0,.15),transparent);
+  border-top:1px solid rgba(255,176,0,.3);
+}
+.eva-warning.show{opacity:1}
+.eva-warning .warn-text{
+  position:absolute;white-space:nowrap;
+  font-family:var(--font-mono2);font-size:10px;letter-spacing:.15em;
+  color:var(--amber);text-shadow:0 0 4px rgba(255,176,0,.6);
+  animation:warnScroll 20s linear infinite;
+}
+.eva-warning.top .warn-text{top:50%;transform:translateY(-50%);animation-duration:18s}
+.eva-warning.bottom .warn-text{top:50%;transform:translateY(-50%);animation-duration:14s;animation-direction:reverse}
+@keyframes warnScroll{0%{left:100%}100%{left:-100%}}
+/* corner accents on warning bars */
+.eva-warning::before,.eva-warning::after{
+  content:"";position:absolute;width:24px;height:100%;
+  background:repeating-linear-gradient(135deg,rgba(255,176,0,.3) 0,rgba(255,176,0,.3) 6px,transparent 6px,transparent 12px);
+}
+.eva-warning::before{left:0}
+.eva-warning::after{right:0}
+
+/* EVA alert — real glitch on errors: RGB tear + screen shake + data corruption */
+.eva-alert{
+  position:fixed;inset:0;pointer-events:none;z-index:9004;
+  opacity:0;
+}
+.eva-alert.show{animation:glitchAlert .6s steps(1)}
+@keyframes glitchAlert{
+  0%{opacity:0}
+  5%{opacity:1;background:rgba(255,45,74,.12);
+     box-shadow:inset 4px 0 0 rgba(255,0,0,.3),inset -4px 0 0 rgba(0,150,255,.3);
+     transform:translate(-3px,1px) skewX(-1deg)}
+  10%{opacity:0;transform:translate(0)}
+  15%{opacity:1;background:rgba(255,45,74,.08);
+     box-shadow:inset -3px 0 0 rgba(255,0,0,.25),inset 3px 0 0 rgba(0,150,255,.25);
+     transform:translate(2px,-1px) skewX(1deg)}
+  20%{opacity:0;transform:translate(0)}
+  25%{opacity:1;background:rgba(255,45,74,.15);
+     transform:translate(-1px,0) skewX(0deg);
+     box-shadow:inset 6px 0 0 rgba(255,0,0,.2),inset -6px 0 0 rgba(0,150,255,.2)}
+  35%{opacity:0}
+  100%{opacity:0;transform:translate(0);box-shadow:none;background:none}
+}
+
+/* Signal noise */
+.crt-noise{
+  position:fixed;inset:0;pointer-events:none;z-index:8997;opacity:0;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.4'/%3E%3C/svg%3E");
+  mix-blend-mode:screen;
+}
+.crt-noise.burst{animation:noiseBurst .15s steps(2)}
+@keyframes noiseBurst{0%{opacity:0}50%{opacity:.15}100%{opacity:0}}
+
+/* Thermoptic ripple — GITS:SAC active camo */
+.crt-ripple{
+  position:fixed;inset:0;pointer-events:none;z-index:8996;opacity:.03;
+  background:repeating-linear-gradient(90deg,
+    transparent 0px,
+    rgba(0,229,255,.05) 2px,
+    transparent 4px,
+    rgba(255,176,0,.03) 6px,
+    transparent 8px);
+  animation:rippleShift 4s linear infinite;
+}
+@keyframes rippleShift{0%{transform:translateX(0)}100%{transform:translateX(8px)}}
+
+/* EVA targeting HUD — full animated targeting system */
+.eva-reticle{
+  position:fixed;width:160px;height:160px;pointer-events:none;z-index:9005;
+  opacity:0;transition:opacity .15s ease;
+  transform:translate(-50%,-50%);
+}
+.eva-reticle.show{opacity:.8}
+.eva-reticle canvas{width:160px;height:160px}
+
+/* Data rain — actually visible */
+.data-rain{
+  position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.4;
+}
+
+/* Glitch text effect — for error states */
+.glitch-text{
+  position:relative;
+  animation:glitchShake .3s steps(4);
+}
+@keyframes glitchShake{
+  0%{transform:translate(0)}25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-1px)}75%{transform:translate(-1px,0)}100%{transform:translate(0)}
+}
+
+/* Screen curvature — barrel distortion via SVG filter */
+.crt-curve{
+  position:fixed;inset:0;pointer-events:none;z-index:8995;
+  opacity:0; /* hidden by default, toggled on for dramatic moments */
+}
+
+/* Chromatic aberration — MAXIMUM (dark mode only) */
+html[data-theme="dark"] .crt-body .tline{
+  text-shadow:
+    -1px 0 0 rgba(255,0,0,.18),
+    1px 0 0 rgba(0,229,255,.18),
+    0 0 4px rgba(255,176,0,.1),
+    0 0 8px rgba(255,176,0,.05);
+}
+html[data-theme="dark"] .crt-body .t-method, html[data-theme="dark"] .crt-body .t-url, html[data-theme="dark"] .crt-body .t-prompt{
+  text-shadow:
+    -1.5px 0 0 rgba(255,0,0,.25),
+    1.5px 0 0 rgba(0,229,255,.25),
+    0 0 6px currentColor,
+    0 0 12px currentColor;
+}
+html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-seamless .jk-str{
+  text-shadow: 0 0 6px currentColor, 0 0 12px currentColor;
+}
+
+/* Session block entrance — more dramatic */
+.session-block.absorb{
+  animation:absorbMax .4s cubic-bezier(.22,.61,.36,1);
+}
+@keyframes absorbMax{
+  0%{opacity:0;transform:translateX(-16px) scale(.98);filter:blur(2px)}
+  60%{opacity:1;filter:blur(0)}
+  100%{opacity:1;transform:translateX(0) scale(1);filter:blur(0)}
+}
+
+/* Transmit state — whole screen shifts color temperature */
+body.transmitting{
+  animation:tempShift .5s ease-out;
+}
+@keyframes tempShift{
+  0%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(-8deg) brightness(1.05)}100%{filter:hue-rotate(0deg)}
+}
+
+/* Response reveal — MAXIMUM */
+.resp-block-reveal{
+  animation:respRevealMax .6s cubic-bezier(.22,.61,.36,1);
+}
+@keyframes respRevealMax{
+  0%{opacity:0;transform:translateY(12px) scale(.99)}
+  40%{opacity:1;box-shadow:0 0 20px rgba(255,176,0,.4),0 0 40px rgba(255,176,0,.2)}
+  70%{box-shadow:0 0 10px rgba(255,176,0,.2)}
+  100%{opacity:1;transform:translateY(0) scale(1);box-shadow:none}
+}
+
+/* EVA system status overlay — corner data readouts */
+.eva-status{
+  position:fixed;top:8px;left:8px;z-index:9006;pointer-events:none;
+  font-family:var(--font-mono2);font-size:9px;color:rgba(255,176,0,.3);letter-spacing:.1em;
+  line-height:1.6;
+}
+.eva-status-r{
+  position:fixed;top:8px;right:8px;z-index:9006;pointer-events:none;
+  font-family:var(--font-mono2);font-size:9px;color:rgba(255,176,0,.3);letter-spacing:.1em;
+  line-height:1.6;text-align:right;
+}
+
+/* power-on boot flash — CRT power-on sequence */
+.boot-flash{position:fixed;inset:0;background:#fff;z-index:9999;animation:bootflash 1.2s ease-out forwards;pointer-events:none}
+@keyframes bootflash{
+  0%{opacity:0;clip-path:inset(0 0 0 0)}
+  3%{opacity:1;clip-path:inset(0 0 0 0)}
+  8%{opacity:.15;clip-path:inset(48% 0 48% 0)}
+  12%{opacity:.8;clip-path:inset(48% 0 48% 0)}
+  20%{opacity:.05;clip-path:inset(0 0 0 0)}
+  100%{opacity:0;clip-path:inset(0 0 0 0);visibility:hidden}
+}
+
+/* ===== Transmit shockwave — ring emanates from command line on Y press ===== */
+.shockwave{
+  position:fixed;pointer-events:none;z-index:9003;
+  border:2px solid var(--amber);border-radius:50%;
+  opacity:0;
+}
+.shockwave.fire{animation:shockwaveExpand .8s ease-out forwards}
+@keyframes shockwaveExpand{
+  0%{width:20px;height:20px;opacity:.8;border-width:3px}
+  50%{opacity:.4;border-width:2px}
+  100%{width:1200px;height:1200px;opacity:0;border-width:1px}
+}
+
+/* ===== Response data burst — radial glow from response block ===== */
+.data-burst{
+  position:absolute;pointer-events:none;z-index:3;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,176,0,.15),transparent 70%);
+  opacity:0;
+}
+.data-burst.fire{animation:dataBurst .6s ease-out forwards}
+@keyframes dataBurst{
+  0%{opacity:0;transform:scale(.5)}
+  30%{opacity:1;transform:scale(1.2)}
+  100%{opacity:0;transform:scale(2)}
+}
+
+/* ===== CRT power-down on theme switch — brief screen flicker ===== */
+body.theme-switching{animation:themeSwitch .3s steps(3)}
+@keyframes themeSwitch{
+  0%{filter:brightness(1)}33%{filter:brightness(0.3)}66%{filter:brightness(1.5)}100%{filter:brightness(1)}
+}
 
 /* ===== Layout shell ===== */
 .shell{display:flex;flex-direction:column;height:100vh;height:100dvh}
@@ -728,6 +955,7 @@ html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-se
 <div class="crt-flicker"></div>
 <div class="crt-scanlines"></div>
 <div class="crt-vignette"></div>
+<div class="eva-alert" id="evaAlert"></div>
 
 <div class="shell">
   <!-- mobile sidebar toggle (floating, hidden on desktop) -->
@@ -6733,14 +6961,87 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     return String(randInt(10000, 99999));
   }
 
-  function randomizeResponse(obj){
-    if(!obj || typeof obj !== "object") return obj;
-    if(Array.isArray(obj)){ return obj.map(randomizeResponse); }
+  // ===== SESSION PATIENT IDENTITY MAP =====
+  // Maps original patientId → consistent fictional identity (name, address, phone, ssn, dob, etc.)
+  // So if you look up patient 9324 then later do GetBalance for 9324, you get the same John Smith.
+  var patientIdentities = {};
+  var chartToPatient = {}; // chartNumber → patientId mapping for consistency
 
-    // pick one consistent name + address pair for this entire object
+  function getPatientIdentity(originalId){
+    // check if this ID maps to an existing identity (either as original or as newPatientId)
+    if(patientIdentities[originalId]) return patientIdentities[originalId];
+    // check if this is a newPatientId we already assigned
+    for(var existingId in patientIdentities){
+      if(patientIdentities[existingId].newPatientId === originalId) return patientIdentities[existingId];
+    }
+    // also check chartNumber
+    for(var existingId2 in patientIdentities){
+      if(patientIdentities[existingId2].chartNumber === originalId) return patientIdentities[existingId2];
+    }
     var nameIdx = randInt(0, FICTIONAL_NAMES.length - 1);
     var addrIdx = randInt(0, FICTIONAL_ADDRESSES.length - 1);
-    // pick one consistent appointment status for this object
+    var identity = {
+      nameIdx: nameIdx,
+      addrIdx: addrIdx,
+      firstName: FICTIONAL_NAMES[nameIdx][0],
+      lastName: FICTIONAL_NAMES[nameIdx][1],
+      address1: FICTIONAL_ADDRESSES[addrIdx][0] + " " + FICTIONAL_ADDRESSES[addrIdx][1],
+      city: FICTIONAL_ADDRESSES[addrIdx][2],
+      state: FICTIONAL_ADDRESSES[addrIdx][3],
+      zip: randZip(),
+      homePhone: randPhone(),
+      workPhone: randPhone(),
+      mobilePhone: randPhone(),
+      email: FICTIONAL_NAMES[nameIdx][0].toLowerCase() + "." + FICTIONAL_NAMES[nameIdx][1].toLowerCase().replace(/[^a-z]/g,"") + "@email.com",
+      dob: randDate(),
+      ssn1: randInt(100,899), ssn2: randInt(10,99), ssn3: randInt(1000,9999),
+      sex: ["M","F"][randInt(0,1)],
+      newPatientId: randNumStr(),
+      chartNumber: randNumStr()
+    };
+    patientIdentities[originalId] = identity;
+    return identity;
+  }
+
+  function randomizeResponse(obj, originalPatientId){
+    if(!obj || typeof obj !== "object") return obj;
+    if(Array.isArray(obj)){ return obj.map(function(item){ return randomizeResponse(item, originalPatientId); }); }
+
+    // detect patientId in this object to maintain identity consistency
+    var pid = null;
+    var hasPatientFields = false;
+    for(var k in obj){
+      var kl = k.toLowerCase();
+      if(kl === "patientid" && typeof obj[k] === "string"){ pid = obj[k]; }
+      if(kl === "patient" && typeof obj[k] === "string" && /^\d+$/.test(obj[k])){ pid = obj[k]; }
+      if(kl === "firstname" || kl === "lastname" || kl === "dob" || kl === "dateofbirth"){ hasPatientFields = true; }
+    }
+    // if this object has patient fields but no patientId, use the "id" field as patientId
+    if(!pid && hasPatientFields){
+      for(var k2 in obj){
+        if(k2.toLowerCase() === "id" && typeof obj[k2] === "string"){ pid = obj[k2]; break; }
+        if(k2.toLowerCase() === "chartnumber" && typeof obj[k2] === "string"){ pid = obj[k2]; break; }
+      }
+    }
+    // if we have an originalPatientId from the request, it takes priority — 
+    // the user asked for this specific patient, so use it for identity lookup
+    if(originalPatientId) pid = originalPatientId;
+
+    // get or create a consistent identity for this patient
+    var identity = pid ? getPatientIdentity(pid) : {
+      nameIdx: randInt(0, FICTIONAL_NAMES.length - 1),
+      addrIdx: randInt(0, FICTIONAL_ADDRESSES.length - 1),
+      firstName: FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][0],
+      lastName: FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][1],
+      address1: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][0] + " " + FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][1],
+      city: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][2],
+      state: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][3],
+      zip: randZip(), homePhone: randPhone(), workPhone: randPhone(), mobilePhone: randPhone(),
+      email: "patient@email.com", dob: randDate(),
+      ssn1: randInt(100,899), ssn2: randInt(10,99), ssn3: randInt(1000,9999),
+      sex: "M", newPatientId: randNumStr(), chartNumber: randNumStr()
+    };
+
     var apptStatus = APPT_STATUSES[randInt(0, APPT_STATUSES.length - 1)];
     var apptNote = APPT_NOTES[randInt(0, APPT_NOTES.length - 1)];
 
@@ -6750,35 +7051,39 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       var lk = key.toLowerCase();
       var val = obj[key];
 
-      // strings — replace based on field name
       if(typeof val === "string"){
-        // names
-        if(lk === "firstname"){ result[key] = FICTIONAL_NAMES[nameIdx][0]; continue; }
-        if(lk === "lastname"){ result[key] = FICTIONAL_NAMES[nameIdx][1]; continue; }
+        // names — use the consistent identity
+        if(lk === "firstname"){ result[key] = identity.firstName; continue; }
+        if(lk === "lastname"){ result[key] = identity.lastName; continue; }
         if(lk === "middlename"){ result[key] = FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][0].charAt(0); continue; }
-        if(lk === "preferredname"){ result[key] = FICTIONAL_NAMES[nameIdx][0]; continue; }
-        if(lk === "name"){ result[key] = FICTIONAL_NAMES[nameIdx][0] + " " + FICTIONAL_NAMES[nameIdx][1]; continue; }
+        if(lk === "preferredname"){ result[key] = identity.firstName; continue; }
+        if(lk === "name"){ result[key] = identity.firstName + " " + identity.lastName; continue; }
 
-        // IDs — random 4-10 digit numbers
-        if(lk === "patientid" || lk === "chartnumber" || lk === "appointmentid" || lk === "id" || lk === "alternatepatientid"){
-          if(/^\d+$/.test(val)){ result[key] = randNumStr(); continue; }
+        // IDs — always replace, even non-numeric like "abc"
+        if(lk === "patientid" || lk === "alternatepatientid"){
+          result[key] = identity.newPatientId; continue;
+        }
+        if(lk === "chartnumber"){ result[key] = identity.chartNumber; continue; }
+        if(lk === "appointmentid"){ result[key] = randNumStr(); continue; }
+        if(lk === "id"){
+          // if in patient context, use the consistent patient ID
+          if(hasPatientFields && identity.newPatientId){ result[key] = identity.newPatientId; continue; }
+          result[key] = randNumStr(); continue;
         }
 
-        // appointment status — use the consistent apptStatus for this object
+        // appointment status
         if(lk === "status"){ result[key] = apptStatus.text; continue; }
         if(lk === "rawstatus"){ result[key] = apptStatus.code; continue; }
         if(lk === "statustext" || (lk === "sourcetext" && /appoint/i.test(JSON.stringify(obj)))){
           result[key] = apptStatus.text; continue;
         }
 
-        // notes — random appointment note
-        if(lk === "notes" && val !== null){
-          result[key] = apptNote; continue;
-        }
+        // notes
+        if(lk === "notes" && val !== null){ result[key] = apptNote; continue; }
 
         // dates
         if(lk === "raw" && typeof obj["value"] !== "undefined"){
-          if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(val)){ result[key] = randDate(); continue; }
+          if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(val)){ result[key] = identity.dob; continue; }
         }
         if(lk === "created" || lk === "modified" || lk === "deploymentdate" || lk === "publisheddate"){
           if(val && val.length > 8){ result[key] = randInt(2015,2024) + "-" + String(randInt(1,12)).padStart(2,"0") + "-" + String(randInt(1,28)).padStart(2,"0") + "T" + String(randInt(0,23)).padStart(2,"0") + ":" + String(randInt(0,59)).padStart(2,"0") + ":" + String(randInt(0,59)).padStart(2,"0"); continue; }
@@ -6787,46 +7092,47 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
           result[key] = randInt(2020,2024) + "-" + String(randInt(1,12)).padStart(2,"0") + "-" + String(randInt(1,28)).padStart(2,"0") + "T" + String(randInt(7,17)).padStart(2,"0") + ":" + (randInt(0,11)*5).toString().padStart(2,"0") + ":00-04:00"; continue;
         }
 
-        // phones
-        if(lk === "homephone" || lk === "workphone" || lk === "mobilephone" || lk === "phone" || lk === "cellphone"){
-          if(val && val.length > 5){ result[key] = randPhone(); continue; }
-        }
+        // phones — use consistent identity
+        if(lk === "homephone"){ result[key] = identity.homePhone; continue; }
+        if(lk === "workphone"){ result[key] = identity.workPhone; continue; }
+        if(lk === "mobilephone" || lk === "cellphone"){ result[key] = identity.mobilePhone; continue; }
+        if(lk === "phone"){ if(val && val.length > 5){ result[key] = identity.homePhone; continue; } }
 
-        // addresses
-        if(lk === "address1"){ var a = FICTIONAL_ADDRESSES[addrIdx]; result[key] = a[0] + " " + a[1]; continue; }
-        if(lk === "city"){ result[key] = FICTIONAL_ADDRESSES[addrIdx][2]; continue; }
-        if(lk === "state"){ result[key] = FICTIONAL_ADDRESSES[addrIdx][3]; continue; }
-        if(lk === "zip" || lk === "zipcode"){ result[key] = randZip(); continue; }
-        if(lk === "email"){ result[key] = FICTIONAL_NAMES[nameIdx][0].toLowerCase() + "." + FICTIONAL_NAMES[nameIdx][1].toLowerCase().replace(/[^a-z]/g,"") + "@email.com"; continue; }
+        // addresses — use consistent identity
+        if(lk === "address1"){ result[key] = identity.address1; continue; }
+        if(lk === "address2"){ result[key] = val; continue; } // keep null/empty
+        if(lk === "city"){ result[key] = identity.city; continue; }
+        if(lk === "state"){ result[key] = identity.state; continue; }
+        if(lk === "zip" || lk === "zipcode"){ result[key] = identity.zip; continue; }
+        if(lk === "email"){ result[key] = identity.email; continue; }
+        if(lk === "sex"){ result[key] = identity.sex; continue; }
 
         // SSN
-        if(lk === "socialsecuritynumber"){ continue; } // handled as object below
+        if(lk === "socialsecuritynumber"){ continue; }
 
-        // numeric strings that aren't IDs but look like they should be randomized
+        // numeric strings
         if(/^\d{4,10}$/.test(val) && lk !== "moduleversion"){
           result[key] = randNumStr(); continue;
         }
 
-        result[key] = val; // keep as-is
+        result[key] = val;
       }
-      // objects — recurse, but handle specific structures
       else if(typeof val === "object" && val !== null){
-        // date objects with "value" (/Date(...)/) and "raw"
+        // date objects
         if(val.value && val.raw && typeof val.raw === "string"){
-          var newObj = randomizeResponse(val);
-          newObj.raw = randDate();
-          newObj.value = "/Date(" + (new Date(randDate()).getTime()) + ")/";
+          var newObj = randomizeResponse(val, pid);
+          newObj.raw = identity.dob;
+          newObj.value = "/Date(" + (new Date(identity.dob).getTime()) + ")/";
           result[key] = newObj; continue;
         }
-        // SSN object with formatted + raw
+        // SSN object
         if(lk === "socialsecuritynumber" && val.formatted){
-          var ssn1 = randInt(100,899), ssn2 = randInt(10,99), ssn3 = randInt(1000,9999);
-          result[key] = { formatted: ssn1+"-"+ssn2+"-"+ssn3, raw: String(ssn1)+String(ssn2)+String(ssn3) }; continue;
+          result[key] = { formatted: identity.ssn1+"-"+identity.ssn2+"-"+identity.ssn3, raw: String(identity.ssn1)+String(identity.ssn2)+String(identity.ssn3) }; continue;
         }
-        result[key] = randomizeResponse(val);
+        result[key] = randomizeResponse(val, pid);
       }
       else {
-        result[key] = val; // numbers, booleans, null — keep as-is
+        result[key] = val;
       }
     }
     return result;
@@ -7305,6 +7611,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(state.busy) return; var editor = block.querySelector(".req-editor"); var parsed = safeParseJSON(editor ? editor.value : state.requestText);
     var lat = 350 + Math.floor(Math.random()*450); var validation = validateRequest(ep, parsed); var finalStatus = validation.valid ? (state.simStatus||200) : validation.code;
     state.busy = true; setStatus(ep.name, (ep.method||"POST").toUpperCase(), "TRANSMIT"); setCrtPath(ep.name, "TRANSMIT", "var(--amber)");
+    document.body.classList.add("transmitting");
     var area = block.querySelector(".resp-area"); var t0 = performance.now();
     var html = '<div class="tline tx-line" style="margin-top:8px">» transmitting</div>';
     if(!parsed.ok){ html += '<div class="tline t-err">  ▌ payload parse error: '+esc(parsed.err)+'</div>'; }
@@ -7326,6 +7633,8 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       clearInterval(iv); var elapsed = Math.round(performance.now()-t0); state.latency = elapsed;
       renderResponse(ep, parsed, validation, finalStatus, elapsed, block);
       state.busy = false; setCrtPath(ep.name, "COMPLETE", "var(--green)");
+      document.body.classList.remove("transmitting");
+      if(finalStatus >= 400) triggerAlert();
       setStatus(ep.name, (ep.method||"POST").toUpperCase(), finalStatus>=400?"ERROR":"COMPLETE", elapsed);
     }, Math.max(lat, 120));
   }
@@ -7337,7 +7646,16 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(status>=500){ var scr = $("crtScreen"); if(scr){ scr.classList.add("glitch"); setTimeout(function(){ scr.classList.remove("glitch"); }, 400); } }
     var bodyObj;
     if(isErr){ bodyObj = !validation.valid ? errorBody(ep, status, validation.reason, validation.detail) : errorBody(ep, status); }
-    else { bodyObj = ep.sampleResponse != null ? randomizeResponse(cloneObj(ep.sampleResponse)) : {}; }
+    else {
+      // extract the patientId from the request to maintain identity consistency
+      var reqPid = null;
+      if(parsed.ok && parsed.value){
+        if(parsed.value.patientId) reqPid = parsed.value.patientId;
+        else if(parsed.value.patient) reqPid = parsed.value.patient;
+        else if(parsed.value.request && parsed.value.request.patientId) reqPid = parsed.value.request.patientId;
+      }
+      bodyObj = ep.sampleResponse != null ? randomizeResponse(cloneObj(ep.sampleResponse), reqPid) : {};
+    }
     var html = '<div class="tline" style="margin-top:10px"><span class="t-section">» response</span> <span class="'+statusCls+'">'+esc(status+' '+statusText(status))+'</span> <span class="t-dim">· '+latency+'ms</span></div>';
     html += '<div class="resp-seamless '+blockCls+'">';
     html += '<span class="'+statusCls+'">HTTP/1.1 '+esc(status+' '+statusText(status))+'</span>\n';
@@ -7795,8 +8113,18 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   }
 
   // ===== FONT + THEME =====
-  function applyFontScale(){ var s = state.fontScale; crtBody.style.fontSize = (13.5 * s) + "px"; document.documentElement.style.fontSize = (100 * s) + "px"; }
-  function applySbFontScale(){ var s = state.sbFontScale; if(sbList) sbList.style.fontSize = (12 * s) + "px"; var c = document.querySelector(".sb-count"); if(c) c.style.fontSize = (10 * s) + "px"; var si = document.querySelector(".sb-search input"); if(si) si.style.fontSize = (12 * s) + "px"; }
+  function applyFontScale(){
+    var s = state.fontScale;
+    // use zoom on the entire workspace — scales everything proportionally
+    var ws = document.querySelector(".workspace");
+    if(ws) ws.style.zoom = s;
+  }
+  function applySbFontScale(){
+    var s = state.sbFontScale;
+    // zoom just the sidebar
+    var sb = document.getElementById("sidebar");
+    if(sb) sb.style.zoom = s;
+  }
   function applyTheme(){ document.documentElement.setAttribute("data-theme", state.theme); var b = $("themeToggle"); if(b) b.textContent = state.theme==="dark" ? "☀ light" : "☾ dark"; }
 
   // ===== #1 COMMAND PALETTE (Ctrl+K) =====
@@ -7946,20 +8274,224 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     });
   }
 
-  // ===== #5 SMOOTH RESPONSE REVEAL =====
-  // Called from renderResponse — adds the reveal animation + scroll-to-center
+  // ===== #5 SMOOTH RESPONSE REVEAL + DATA BURST =====
   function smoothReveal(area){
     if(!area) return;
-    // add reveal class to the response block
     var respBlock = area.querySelector(".resp-seamless");
     if(respBlock){
       respBlock.classList.add("resp-block-reveal");
-      setTimeout(function(){ respBlock.classList.remove("resp-block-reveal"); }, 500);
+      setTimeout(function(){ respBlock.classList.remove("resp-block-reveal"); }, 600);
     }
-    // smooth scroll to center the response
+    // data burst — radial glow from the response block center
+    fireDataBurst(area);
     setTimeout(function(){
       area.scrollIntoView({behavior:"smooth", block:"center"});
     }, 100);
+  }
+
+  // ===== RESPONSE DATA BURST — radial glow pulse =====
+  function fireDataBurst(area){
+    var r = area.getBoundingClientRect();
+    var burst = document.createElement("div");
+    burst.className = "data-burst fire";
+    var size = Math.max(r.width, 300);
+    burst.style.width = size + "px";
+    burst.style.height = size + "px";
+    burst.style.left = (r.left + r.width / 2 - size / 2) + "px";
+    burst.style.top = (r.top + r.height / 2 - size / 2) + "px";
+    burst.style.position = "fixed";
+    document.body.appendChild(burst);
+    setTimeout(function(){ burst.remove(); }, 600);
+  }
+
+  // ===== MAXIMALIST EFFECTS =====
+
+  // --- Data Rain (Matrix-style background) ---
+  function startDataRain(){
+    var canvas = $("dataRainCanvas"); if(!canvas) return;
+    var ctx = canvas.getContext("2d");
+    var w, h, dpr, cols, drops;
+    var chars = "01ｱｲｳｴｵｶｷｸｹｺｻｼｽｾﾀﾁﾂﾃﾅﾆﾇﾈﾊﾋﾌﾍﾎ#@$%&ABCDEF0123456789".split("");
+
+    function resize(){
+      dpr = window.devicePixelRatio || 1;
+      w = window.innerWidth; h = window.innerHeight;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      canvas.style.width = w + "px"; canvas.style.height = h + "px";
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.floor(w / 14);
+      drops = [];
+      for(var i = 0; i < cols; i++){ drops[i] = Math.random() * h; }
+    }
+    resize();
+    window.addEventListener("resize", resize);
+
+    function draw(){
+      ctx.fillStyle = "rgba(0,0,0,0.05)";
+      ctx.fillRect(0, 0, w, h);
+      ctx.font = "12px 'Share Tech Mono', monospace";
+      for(var i = 0; i < cols; i++){
+        var ch = chars[Math.floor(Math.random() * chars.length)];
+        var x = i * 14;
+        var y = drops[i];
+        // gradient — brighter at the leading edge
+        ctx.fillStyle = Math.random() > 0.975 ? "rgba(255,200,80,1)" : "rgba(255,176,0,.7)";
+        ctx.fillText(ch, x, y);
+        drops[i] += 14;
+        if(drops[i] > h && Math.random() > 0.975){ drops[i] = 0; }
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  // --- EVA targeting HUD — animated canvas targeting system ---
+  function setupReticle(){
+    var reticle = $("evaReticle"); if(!reticle) return;
+    var canvas = $("reticleCanvas"); if(!canvas) return;
+    var ctx = canvas.getContext("2d");
+    var mx = 0, my = 0, shown = false;
+    var angle = 0;
+
+    document.addEventListener("mousemove", function(e){
+      mx = e.clientX; my = e.clientY;
+      reticle.style.left = mx + "px";
+      reticle.style.top = my + "px";
+      if(!shown){ shown = true; reticle.classList.add("show"); }
+    });
+    document.addEventListener("mouseleave", function(){ shown = false; reticle.classList.remove("show"); });
+
+    function draw(){
+      ctx.clearRect(0, 0, 160, 160);
+      if(!shown){ requestAnimationFrame(draw); return; }
+      angle += 0.02;
+      var cx = 80, cy = 80;
+
+      // outer rotating arc segments — 4 arcs with gaps
+      ctx.strokeStyle = "rgba(255,176,0,.7)";
+      ctx.lineWidth = 2;
+      for(var i = 0; i < 4; i++){
+        var a0 = angle + i * Math.PI / 2;
+        var a1 = a0 + Math.PI / 3;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 68, a0, a1);
+        ctx.stroke();
+      }
+
+      // inner counter-rotating ring
+      ctx.strokeStyle = "rgba(255,176,0,.5)";
+      ctx.lineWidth = 1.5;
+      for(var i = 0; i < 3; i++){
+        var a0 = -angle * 1.5 + i * (Math.PI * 2 / 3);
+        var a1 = a0 + Math.PI / 4;
+        ctx.beginPath();
+        ctx.arc(cx, cy, 48, a0, a1);
+        ctx.stroke();
+      }
+
+      // center crosshair — big
+      ctx.strokeStyle = "rgba(255,176,0,.8)";
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(cx - 20, cy); ctx.lineTo(cx - 8, cy);
+      ctx.moveTo(cx + 8, cy); ctx.lineTo(cx + 20, cy);
+      ctx.moveTo(cx, cy - 20); ctx.lineTo(cx, cy - 8);
+      ctx.moveTo(cx, cy + 8); ctx.lineTo(cx, cy + 20);
+      ctx.stroke();
+
+      // center dot
+      ctx.fillStyle = "rgba(255,176,0,1)";
+      ctx.beginPath();
+      ctx.arc(cx, cy, 2, 0, Math.PI * 2);
+      ctx.fill();
+
+      // corner brackets
+      ctx.strokeStyle = "rgba(255,176,0,.6)";
+      ctx.lineWidth = 2;
+      var b = 8, s = 56;
+      ctx.beginPath();
+      ctx.moveTo(cx - s, cy - s + b); ctx.lineTo(cx - s, cy - s); ctx.lineTo(cx - s + b, cy - s);
+      ctx.moveTo(cx + s - b, cy - s); ctx.lineTo(cx + s, cy - s); ctx.lineTo(cx + s, cy - s + b);
+      ctx.moveTo(cx - s, cy + s - b); ctx.lineTo(cx - s, cy + s); ctx.lineTo(cx - s + b, cy + s);
+      ctx.moveTo(cx + s - b, cy + s); ctx.lineTo(cx + s, cy + s); ctx.lineTo(cx + s, cy + s - b);
+      ctx.stroke();
+
+      // tick marks on outer ring
+      ctx.strokeStyle = "rgba(255,176,0,.3)";
+      ctx.lineWidth = 1;
+      for(var t = 0; t < 360; t += 15){
+        var rad = t * Math.PI / 180;
+        var isMajor = (t % 90 === 0);
+        var r1 = isMajor ? 72 : 74;
+        var r2 = isMajor ? 78 : 77;
+        ctx.beginPath();
+        ctx.moveTo(cx + Math.cos(rad)*r1, cy + Math.sin(rad)*r1);
+        ctx.lineTo(cx + Math.cos(rad)*r2, cy + Math.sin(rad)*r2);
+        ctx.stroke();
+      }
+
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  // --- EVA warning bars during transmit ---
+  function showEvaWarning(show){
+    var top = $("evaWarnTop");
+    if(top){
+      if(show){ top.classList.add("show"); }
+      else { top.classList.remove("show"); }
+    }
+  }
+
+  // --- EVA alert flash on errors ---
+  function triggerAlert(){
+    var alert = $("evaAlert");
+    if(alert){
+      alert.classList.add("show");
+      setTimeout(function(){ alert.classList.remove("show"); }, 600);
+    }
+  }
+
+  // --- Random noise bursts — signal interference ---
+  function startNoiseBursts(){
+    function burst(){
+      var noise = $("crtNoise");
+      if(noise){
+        noise.classList.remove("burst");
+        void noise.offsetWidth;
+        noise.classList.add("burst");
+      }
+      // schedule next — random 3-15 seconds
+      setTimeout(burst, 3000 + Math.random() * 12000);
+    }
+    setTimeout(burst, 5000);
+  }
+
+  // --- EVA status readouts — corner data that updates ---
+  function startEvaStatus(){
+    var l = $("evaStatusL"), r = $("evaStatusR");
+    if(!l || !r) return;
+    var frame = 0;
+    function update(){
+      frame++;
+      var t = frame * 0.016;
+      l.innerHTML =
+        "SYS://LKBRIDGE<br>" +
+        "BUF:" + Math.floor(4096 + Math.sin(t)*512) + "/" + "8192<br>" +
+        "SYNC:" + (97.5 + Math.sin(t*1.3)*1.5).toFixed(1) + "%<br>" +
+        "NODES:133/133<br>" +
+        "TEMP:" + (42 + Math.sin(t*0.7)*3).toFixed(0) + "°C";
+      r.innerHTML =
+        "EVA-01 LINK<br>" +
+        "PWR:" + (88 + Math.sin(t*2)*4).toFixed(0) + "%<br>" +
+        "A.T.FIELD:STABLE<br>" +
+        "LCL:CIRCULATING<br>" +
+        "PILOT:SYNCED";
+      requestAnimationFrame(update);
+    }
+    // update at ~10fps to save CPU
+    setInterval(update, 100);
   }
 
   // ===== INIT =====
@@ -7977,7 +8509,11 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     $("fontPlus").addEventListener("click", function(){ state.fontScale = Math.min(1.6, Math.round((state.fontScale + 0.1) * 100) / 100); applyFontScale(); });
     $("sbFontMinus").addEventListener("click", function(){ state.sbFontScale = Math.max(0.75, Math.round((state.sbFontScale - 0.1) * 100) / 100); applySbFontScale(); });
     $("sbFontPlus").addEventListener("click", function(){ state.sbFontScale = Math.min(1.6, Math.round((state.sbFontScale + 0.1) * 100) / 100); applySbFontScale(); });
-    $("themeToggle").addEventListener("click", function(){ state.theme = state.theme==="dark" ? "light" : "dark"; applyTheme(); });
+    $("themeToggle").addEventListener("click", function(){
+      document.body.classList.add("theme-switching");
+      setTimeout(function(){ document.body.classList.remove("theme-switching"); }, 300);
+      state.theme = state.theme==="dark" ? "light" : "dark"; applyTheme();
+    });
     window.LKSIM = { state:state, endpoints:ENDPOINTS, selectEndpoint:selectEndpoint };
   }
   if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); } else { init(); }
