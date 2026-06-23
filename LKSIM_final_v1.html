@@ -7610,6 +7610,14 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(cb) cb.addEventListener("click", function(){ var ed = block.querySelector(".req-editor"); copyText(curlCommand(ep, ed ? ed.value : "")).then(function(){flash("CURL COPIED");}); });
     setCrtPath(ep.name, ep.method.toUpperCase(), methodColor(ep.method));
     setStatus(ep.name, (ep.method||"POST").toUpperCase(), "READY");
+    // scroll the new block into view inside the terminal only — not the parent page
+    var cbEl = document.getElementById("crtBody");
+    if(cbEl){
+      var blockBottom = block.offsetTop + block.offsetHeight;
+      if(blockBottom > cbEl.scrollTop + cbEl.clientHeight){
+        cbEl.scrollTo({ top: blockBottom - cbEl.clientHeight + 20, behavior: "smooth" });
+      }
+    }
   }
 
   function syncReqEditor(block){
@@ -8216,14 +8224,19 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(state.confirmHandler){ document.removeEventListener("keydown", state.confirmHandler); state.confirmHandler=null; }
     state.confirmMode = false; state.selected = ep; state.simStatus = 200;
     state.requestText = JSON.stringify(ep.sampleRequest != null ? ep.sampleRequest : {}, null, 2);
-    // remove idle prompt + hint if present (first selection)
-    var idle = crtBody.querySelector(".tline .cursor");
-    if(idle){
-      var idleLine = idle.closest(".tline");
-      if(idleLine && idleLine.nextElementSibling && idleLine.nextElementSibling.classList.contains("t-dim")){
-        idleLine.nextElementSibling.remove();
+    // remove idle prompt + hint if present (only on FIRST selection — check for data-id-less cursor)
+    var idleCursor = crtBody.querySelector(".tline > .cursor:not(.confirm-cursor)");
+    if(idleCursor && !idleCursor.closest(".session-block")){
+      var idleLine = idleCursor.closest(".tline");
+      if(idleLine){
+        // only remove if this is the idle prompt (has t-prompt but no session-block parent)
+        if(idleLine.querySelector(".t-prompt") && !idleLine.querySelector(".t-method")){
+          if(idleLine.nextElementSibling && idleLine.nextElementSibling.classList.contains("t-dim")){
+            idleLine.nextElementSibling.remove();
+          }
+          idleLine.remove();
+        }
       }
-      if(idleLine) idleLine.remove();
     }
     sbList.querySelectorAll(".sb-item").forEach(function(el){ el.classList.toggle("active", el.getAttribute("data-id")===id); });
     appendSessionBlock(ep);
@@ -8400,7 +8413,18 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       setTimeout(function(){ respBlock.classList.remove("resp-block-reveal"); }, 600);
     }
     fireDataBurst(area);
-    // no page scroll — let the user scroll themselves
+    // scroll ONLY inside the crtBody — never the parent page
+    var cb = document.getElementById("crtBody");
+    if(cb){
+      var block = area.closest(".session-block");
+      if(block){
+        // scroll the response into view inside the terminal scroll area only
+        var blockBottom = block.offsetTop + block.offsetHeight;
+        if(blockBottom > cb.scrollTop + cb.clientHeight){
+          cb.scrollTo({ top: blockBottom - cb.clientHeight + 20, behavior: "smooth" });
+        }
+      }
+    }
   }
 
   // ===== TRANSMIT SHOCKWAVE — ring emanates from the confirm line =====
