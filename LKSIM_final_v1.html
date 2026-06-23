@@ -7081,14 +7081,69 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     return String(randInt(10000, 99999));
   }
 
-  function randomizeResponse(obj){
-    if(!obj || typeof obj !== "object") return obj;
-    if(Array.isArray(obj)){ return obj.map(randomizeResponse); }
+  // ===== SESSION PATIENT IDENTITY MAP =====
+  var patientIdentities = {};
 
-    // pick one consistent name + address pair for this entire object
+  function getPatientIdentity(originalId){
+    if(patientIdentities[originalId]) return patientIdentities[originalId];
+    for(var existingId in patientIdentities){
+      if(patientIdentities[existingId].newPatientId === originalId) return patientIdentities[existingId];
+      if(patientIdentities[existingId].chartNumber === originalId) return patientIdentities[existingId];
+    }
     var nameIdx = randInt(0, FICTIONAL_NAMES.length - 1);
     var addrIdx = randInt(0, FICTIONAL_ADDRESSES.length - 1);
-    // pick one consistent appointment status for this object
+    var identity = {
+      firstName: FICTIONAL_NAMES[nameIdx][0],
+      lastName: FICTIONAL_NAMES[nameIdx][1],
+      address1: FICTIONAL_ADDRESSES[addrIdx][0] + " " + FICTIONAL_ADDRESSES[addrIdx][1],
+      city: FICTIONAL_ADDRESSES[addrIdx][2],
+      state: FICTIONAL_ADDRESSES[addrIdx][3],
+      zip: randZip(),
+      homePhone: randPhone(), workPhone: randPhone(), mobilePhone: randPhone(),
+      email: FICTIONAL_NAMES[nameIdx][0].toLowerCase() + "." + FICTIONAL_NAMES[nameIdx][1].toLowerCase().replace(/[^a-z]/g,"") + "@email.com",
+      dob: randDate(),
+      ssn1: randInt(100,899), ssn2: randInt(10,99), ssn3: randInt(1000,9999),
+      sex: ["M","F"][randInt(0,1)],
+      newPatientId: randNumStr(),
+      chartNumber: randNumStr()
+    };
+    patientIdentities[originalId] = identity;
+    return identity;
+  }
+
+  function randomizeResponse(obj, originalPatientId){
+    if(!obj || typeof obj !== "object") return obj;
+    if(Array.isArray(obj)){ return obj.map(function(item){ return randomizeResponse(item, originalPatientId); }); }
+
+    // detect patientId for identity consistency
+    var pid = null;
+    var hasPatientFields = false;
+    for(var k in obj){
+      var kl = k.toLowerCase();
+      if(kl === "patientid" && typeof obj[k] === "string") pid = obj[k];
+      if(kl === "patient" && typeof obj[k] === "string" && /^\d+$/.test(obj[k])) pid = obj[k];
+      if(kl === "firstname" || kl === "lastname" || kl === "dob" || kl === "dateofbirth") hasPatientFields = true;
+    }
+    if(!pid && hasPatientFields){
+      for(var k2 in obj){
+        if(k2.toLowerCase() === "id" && typeof obj[k2] === "string") pid = obj[k2];
+        if(k2.toLowerCase() === "chartnumber" && typeof obj[k2] === "string") pid = obj[k2];
+      }
+    }
+    if(originalPatientId) pid = originalPatientId;
+
+    var identity = pid ? getPatientIdentity(pid) : {
+      firstName: FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][0],
+      lastName: FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][1],
+      address1: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][0] + " " + FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][1],
+      city: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][2],
+      state: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][3],
+      zip: randZip(), homePhone: randPhone(), workPhone: randPhone(), mobilePhone: randPhone(),
+      email: "patient@email.com", dob: randDate(),
+      ssn1: randInt(100,899), ssn2: randInt(10,99), ssn3: randInt(1000,9999),
+      sex: "M", newPatientId: randNumStr(), chartNumber: randNumStr()
+    };
+
     var apptStatus = APPT_STATUSES[randInt(0, APPT_STATUSES.length - 1)];
     var apptNote = APPT_NOTES[randInt(0, APPT_NOTES.length - 1)];
 
@@ -7098,84 +7153,58 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       var lk = key.toLowerCase();
       var val = obj[key];
 
-      // strings — replace based on field name
       if(typeof val === "string"){
-        // names
-        if(lk === "firstname"){ result[key] = FICTIONAL_NAMES[nameIdx][0]; continue; }
-        if(lk === "lastname"){ result[key] = FICTIONAL_NAMES[nameIdx][1]; continue; }
+        if(lk === "firstname"){ result[key] = identity.firstName; continue; }
+        if(lk === "lastname"){ result[key] = identity.lastName; continue; }
         if(lk === "middlename"){ result[key] = FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][0].charAt(0); continue; }
-        if(lk === "preferredname"){ result[key] = FICTIONAL_NAMES[nameIdx][0]; continue; }
-        if(lk === "name"){ result[key] = FICTIONAL_NAMES[nameIdx][0] + " " + FICTIONAL_NAMES[nameIdx][1]; continue; }
-
-        // IDs — random 4-10 digit numbers
-        if(lk === "patientid" || lk === "chartnumber" || lk === "appointmentid" || lk === "id" || lk === "alternatepatientid"){
-          if(/^\d+$/.test(val)){ result[key] = randNumStr(); continue; }
+        if(lk === "preferredname"){ result[key] = identity.firstName; continue; }
+        if(lk === "name"){ result[key] = identity.firstName + " " + identity.lastName; continue; }
+        if(lk === "patientid" || lk === "alternatepatientid"){ result[key] = identity.newPatientId; continue; }
+        if(lk === "chartnumber"){ result[key] = identity.chartNumber; continue; }
+        if(lk === "appointmentid"){ result[key] = randNumStr(); continue; }
+        if(lk === "id"){
+          if(hasPatientFields && identity.newPatientId){ result[key] = identity.newPatientId; continue; }
+          result[key] = randNumStr(); continue;
         }
-
-        // appointment status — use the consistent apptStatus for this object
         if(lk === "status"){ result[key] = apptStatus.text; continue; }
         if(lk === "rawstatus"){ result[key] = apptStatus.code; continue; }
-        if(lk === "statustext" || (lk === "sourcetext" && /appoint/i.test(JSON.stringify(obj)))){
-          result[key] = apptStatus.text; continue;
-        }
-
-        // notes — random appointment note
-        if(lk === "notes" && val !== null){
-          result[key] = apptNote; continue;
-        }
-
-        // dates
-        if(lk === "raw" && typeof obj["value"] !== "undefined"){
-          if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(val)){ result[key] = randDate(); continue; }
-        }
+        if(lk === "statustext" || (lk === "sourcetext" && /appoint/i.test(JSON.stringify(obj)))){ result[key] = apptStatus.text; continue; }
+        if(lk === "notes" && val !== null){ result[key] = apptNote; continue; }
+        if(lk === "raw" && typeof obj["value"] !== "undefined" && /^\d{1,2}\/\d{1,2}\/\d{4}$/.test(val)){ result[key] = identity.dob; continue; }
         if(lk === "created" || lk === "modified" || lk === "deploymentdate" || lk === "publisheddate"){
           if(val && val.length > 8){ result[key] = randInt(2015,2024) + "-" + String(randInt(1,12)).padStart(2,"0") + "-" + String(randInt(1,28)).padStart(2,"0") + "T" + String(randInt(0,23)).padStart(2,"0") + ":" + String(randInt(0,59)).padStart(2,"0") + ":" + String(randInt(0,59)).padStart(2,"0"); continue; }
         }
         if(lk === "start" && val && val.length > 8 && /T/.test(val)){
           result[key] = randInt(2020,2024) + "-" + String(randInt(1,12)).padStart(2,"0") + "-" + String(randInt(1,28)).padStart(2,"0") + "T" + String(randInt(7,17)).padStart(2,"0") + ":" + (randInt(0,11)*5).toString().padStart(2,"0") + ":00-04:00"; continue;
         }
-
-        // phones
-        if(lk === "homephone" || lk === "workphone" || lk === "mobilephone" || lk === "phone" || lk === "cellphone"){
-          if(val && val.length > 5){ result[key] = randPhone(); continue; }
-        }
-
-        // addresses
-        if(lk === "address1"){ var a = FICTIONAL_ADDRESSES[addrIdx]; result[key] = a[0] + " " + a[1]; continue; }
-        if(lk === "city"){ result[key] = FICTIONAL_ADDRESSES[addrIdx][2]; continue; }
-        if(lk === "state"){ result[key] = FICTIONAL_ADDRESSES[addrIdx][3]; continue; }
-        if(lk === "zip" || lk === "zipcode"){ result[key] = randZip(); continue; }
-        if(lk === "email"){ result[key] = FICTIONAL_NAMES[nameIdx][0].toLowerCase() + "." + FICTIONAL_NAMES[nameIdx][1].toLowerCase().replace(/[^a-z]/g,"") + "@email.com"; continue; }
-
-        // SSN
-        if(lk === "socialsecuritynumber"){ continue; } // handled as object below
-
-        // numeric strings that aren't IDs but look like they should be randomized
-        if(/^\d{4,10}$/.test(val) && lk !== "moduleversion"){
-          result[key] = randNumStr(); continue;
-        }
-
-        result[key] = val; // keep as-is
+        if(lk === "homephone"){ result[key] = identity.homePhone; continue; }
+        if(lk === "workphone"){ result[key] = identity.workPhone; continue; }
+        if(lk === "mobilephone" || lk === "cellphone"){ result[key] = identity.mobilePhone; continue; }
+        if(lk === "phone" && val && val.length > 5){ result[key] = identity.homePhone; continue; }
+        if(lk === "address1"){ result[key] = identity.address1; continue; }
+        if(lk === "address2"){ result[key] = val; continue; }
+        if(lk === "city"){ result[key] = identity.city; continue; }
+        if(lk === "state"){ result[key] = identity.state; continue; }
+        if(lk === "zip" || lk === "zipcode"){ result[key] = identity.zip; continue; }
+        if(lk === "email"){ result[key] = identity.email; continue; }
+        if(lk === "sex"){ result[key] = identity.sex; continue; }
+        if(lk === "socialsecuritynumber"){ continue; }
+        if(/^\d{4,10}$/.test(val) && lk !== "moduleversion"){ result[key] = randNumStr(); continue; }
+        result[key] = val;
       }
-      // objects — recurse, but handle specific structures
       else if(typeof val === "object" && val !== null){
-        // date objects with "value" (/Date(...)/) and "raw"
         if(val.value && val.raw && typeof val.raw === "string"){
-          var newObj = randomizeResponse(val);
-          newObj.raw = randDate();
-          newObj.value = "/Date(" + (new Date(randDate()).getTime()) + ")/";
+          var newObj = randomizeResponse(val, pid);
+          newObj.raw = identity.dob;
+          newObj.value = "/Date(" + (new Date(identity.dob).getTime()) + ")/";
           result[key] = newObj; continue;
         }
-        // SSN object with formatted + raw
         if(lk === "socialsecuritynumber" && val.formatted){
-          var ssn1 = randInt(100,899), ssn2 = randInt(10,99), ssn3 = randInt(1000,9999);
-          result[key] = { formatted: ssn1+"-"+ssn2+"-"+ssn3, raw: String(ssn1)+String(ssn2)+String(ssn3) }; continue;
+          result[key] = { formatted: identity.ssn1+"-"+identity.ssn2+"-"+identity.ssn3, raw: String(identity.ssn1)+String(identity.ssn2)+String(identity.ssn3) }; continue;
         }
-        result[key] = randomizeResponse(val);
+        result[key] = randomizeResponse(val, pid);
       }
-      else {
-        result[key] = val; // numbers, booleans, null — keep as-is
-      }
+      else { result[key] = val; }
     }
     return result;
   }
@@ -7692,7 +7721,15 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(status>=500){ var scr = $("crtScreen"); if(scr){ scr.classList.add("glitch"); setTimeout(function(){ scr.classList.remove("glitch"); }, 400); } }
     var bodyObj;
     if(isErr){ bodyObj = !validation.valid ? errorBody(ep, status, validation.reason, validation.detail) : errorBody(ep, status); }
-    else { bodyObj = ep.sampleResponse != null ? randomizeResponse(cloneObj(ep.sampleResponse)) : {}; }
+    else {
+      var reqPid = null;
+      if(parsed.ok && parsed.value){
+        if(parsed.value.patientId) reqPid = parsed.value.patientId;
+        else if(parsed.value.patient) reqPid = parsed.value.patient;
+        else if(parsed.value.request && parsed.value.request.patientId) reqPid = parsed.value.request.patientId;
+      }
+      bodyObj = ep.sampleResponse != null ? randomizeResponse(cloneObj(ep.sampleResponse), reqPid) : {};
+    }
     var html = '<div class="tline" style="margin-top:10px"><span class="t-section">» response</span> <span class="'+statusCls+'">'+esc(status+' '+statusText(status))+'</span> <span class="t-dim">· '+latency+'ms</span></div>';
     html += '<div class="resp-seamless '+blockCls+'">';
     html += '<span class="'+statusCls+'">HTTP/1.1 '+esc(status+' '+statusText(status))+'</span>\n';
