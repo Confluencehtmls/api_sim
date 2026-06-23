@@ -7608,7 +7608,6 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(st) st.addEventListener("click", function(){ var p = block.querySelector(".schema-panel"); if(p) p.style.display = p.style.display === "none" ? "" : "none"; st.textContent = st.textContent.charAt(0) === "▸" ? st.textContent.replace("▸","▾") : st.textContent.replace("▾","▸"); });
     var cb = block.querySelector(".curl-btn");
     if(cb) cb.addEventListener("click", function(){ var ed = block.querySelector(".req-editor"); copyText(curlCommand(ep, ed ? ed.value : "")).then(function(){flash("CURL COPIED");}); });
-    block.scrollIntoView({behavior:"smooth", block:"start"});
     setCrtPath(ep.name, ep.method.toUpperCase(), methodColor(ep.method));
     setStatus(ep.name, (ep.method||"POST").toUpperCase(), "READY");
   }
@@ -7776,11 +7775,33 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   function appendResetChip(block){
     var area = block.querySelector(".resp-area"); if(!area) return;
     var line = document.createElement("div"); line.className = "tline"; line.style.marginTop = "10px";
-    line.innerHTML = '<button class="chip reset-chip">▸ reset</button>';
+    line.innerHTML = '<button class="chip reset-chip">▸ reset</button> <button class="chip retry-chip">▸ retry</button>';
     area.appendChild(line);
     var rc = line.querySelector(".reset-chip");
     if(rc) rc.addEventListener("click", function(){ if(state.selected) selectEndpoint(state.selected.id); });
-    line.scrollIntoView({behavior:"smooth", block:"nearest"});
+    var rt = line.querySelector(".retry-chip");
+    if(rt) rt.addEventListener("click", function(){
+      // re-enable the status chips + Y/N for this block, clear the response area
+      var sChips = block.querySelectorAll(".s-chip");
+      sChips.forEach(function(c){ c.style.opacity = ""; c.style.pointerEvents = ""; });
+      var yn = block.querySelectorAll(".yn-chip");
+      yn.forEach(function(b){ b.disabled = false; });
+      // restore the confirm cursor
+      var cl = block.querySelector(".confirm-line");
+      if(cl && !cl.querySelector(".confirm-cursor")){
+        var cur = document.createElement("span");
+        cur.className = "cursor confirm-cursor";
+        cl.appendChild(cur);
+      }
+      // clear response area
+      area.innerHTML = "";
+      setupConfirm(state.selected, block);
+      if(state.confirmHandler){ document.removeEventListener("keydown", state.confirmHandler); state.confirmHandler = null; }
+      state.confirmMode = false;
+      state.busy = false;
+      setupConfirm(state.selected, block);
+    });
+    // no scrollIntoView — don't scroll the parent page
   }
 
   // ===== B2: COMMAND INPUT =====
@@ -8378,11 +8399,8 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       respBlock.classList.add("resp-block-reveal");
       setTimeout(function(){ respBlock.classList.remove("resp-block-reveal"); }, 600);
     }
-    // data burst — radial glow from the response block center
     fireDataBurst(area);
-    setTimeout(function(){
-      area.scrollIntoView({behavior:"smooth", block:"center"});
-    }, 100);
+    // no page scroll — let the user scroll themselves
   }
 
   // ===== TRANSMIT SHOCKWAVE — ring emanates from the confirm line =====
