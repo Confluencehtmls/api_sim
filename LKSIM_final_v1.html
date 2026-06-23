@@ -30,7 +30,7 @@
 
   /* Surfaces — true black + deep violet-black */
   --bg:#000000; --bg-2:#06030f; --surface:#0a0518; --surface-2:#0e0820; --surface-3:#140a2a;
-  --text:#e8f7ec; --text-2:#9fb0a8; --text-3:#5d6e64; --text-4:#3a4842;
+  --text:#f8ffec; --text-2:#b8c8c0; --text-3:#7a8a80; --text-4:#5a6862;
   --border:#1a2a22; --border-2:#243a30;
 
   /* phosphor grid */
@@ -39,7 +39,7 @@
 
   /* sidebar */
   --sidebar-bg:#000000; --sidebar-surface:#000000;
-  --sidebar-text:#e0e8d8; --sidebar-text-2:#a8b8a0;
+  --sidebar-text:#f0f8e8; --sidebar-text-2:#c4d4bc;
   --sidebar-border:#1a1a1a;
 
   /* neon phosphor accents */
@@ -78,31 +78,30 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 ::selection{background:var(--amber-soft);color:var(--amber)}
 .mono{font-family:var(--font-mono2)}
 
-/* ===== CRT overlays — MAXIMUM OVERDRIVE ===== */
-/* scanlines — thicker, animated drift */
+/* ===== CRT overlays ===== */
+/* scanlines — visible but not darkening text */
 .crt-scanlines{
   position:fixed;inset:0;pointer-events:none;z-index:9000;
   background:repeating-linear-gradient(0deg,
     rgba(0,0,0,0) 0px,
     rgba(0,0,0,0) 1px,
-    rgba(0,0,0,.35) 2px,
-    rgba(0,0,0,.35) 3px);
-  mix-blend-mode:multiply;opacity:.6;
+    rgba(0,0,0,.12) 2px,
+    rgba(0,0,0,.12) 3px);
+  opacity:.3;
   animation:scanDrift 8s linear infinite;
 }
 @keyframes scanDrift{0%{background-position:0 0}100%{background-position:0 3px}}
 
-/* vignette — deeper, pulsing */
+/* vignette — subtle */
 .crt-vignette{
   position:fixed;inset:0;pointer-events:none;z-index:9001;
-  background:radial-gradient(ellipse at center,transparent 50%,rgba(0,0,0,.6) 100%);
-  animation:vignettePulse 3s ease-in-out infinite;
+  background:radial-gradient(ellipse at center,transparent 65%,rgba(0,0,0,.35) 100%);
 }
 @keyframes vignettePulse{0%,100%{opacity:.85}50%{opacity:1}}
 
-/* CRT flicker — more aggressive */
-.crt-flicker{position:fixed;inset:0;pointer-events:none;z-index:8999;background:rgba(255,176,0,.01);animation:flicker 3s infinite}
-@keyframes flicker{0%,100%{opacity:.15}43%{opacity:.15}44%{opacity:.6}45%{opacity:.15}47%{opacity:.4}48%{opacity:.15}72%{opacity:.15}73%{opacity:.35}74%{opacity:.15}}
+/* CRT flicker — subtle */
+.crt-flicker{position:fixed;inset:0;pointer-events:none;z-index:8999;background:rgba(255,176,0,.005);animation:flicker 4s infinite}
+@keyframes flicker{0%,100%{opacity:.1}47%{opacity:.1}48%{opacity:.3}49%{opacity:.1}}
 
 /* CRT rolling bar — slow horizontal sync distortion */
 .crt-rollbar{
@@ -382,9 +381,9 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
 .sb-search-wrap{display:flex;align-items:center;gap:7px;border:1px solid var(--sidebar-border);background:#000;background-image:none;padding:0 8px;height:30px}
 .sb-search-wrap:focus-within{border-color:var(--amber);box-shadow:0 0 0 1px var(--amber-border)}
 .sb-search-wrap svg{flex:0 0 13px;color:var(--text-3)}
-.sb-search input{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:var(--font-mono2);font-size:var(--fs-sm)}
-.sb-search input::placeholder{color:var(--text-4)}
-.sb-count{font-family:var(--font-mono2);font-size:var(--fs-2xs);color:var(--text-4);letter-spacing:.08em;padding:6px 12px 4px;display:flex;justify-content:space-between;border-bottom:1px solid var(--sidebar-border);background:var(--sidebar-bg);background-image:none}
+.sb-search input{flex:1;background:transparent;border:none;outline:none;color:#f0f8e8;font-family:var(--font-mono2);font-size:var(--fs-sm)}
+.sb-search input::placeholder{color:#a8b8ac;opacity:.8}
+.sb-count{font-family:var(--font-mono2);font-size:var(--fs-2xs);color:#e0e8d0;letter-spacing:.08em;padding:6px 12px 4px;display:flex;justify-content:space-between;border-bottom:1px solid var(--sidebar-border);background:var(--sidebar-bg);background-image:none}
 .sb-list{flex:1;overflow-y:auto;overflow-x:hidden;padding:6px 0 20px;background:var(--sidebar-bg);background-image:none}
 .sb-group{margin-bottom:2px}
 .sb-group-head{
