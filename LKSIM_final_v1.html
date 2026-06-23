@@ -39,7 +39,7 @@
 
   /* sidebar */
   --sidebar-bg:#000000; --sidebar-surface:#000000;
-  --sidebar-text:#9fb0a8; --sidebar-text-2:#5d6e64;
+  --sidebar-text:#e0e8d8; --sidebar-text-2:#a8b8a0;
   --sidebar-border:#1a1a1a;
 
   /* neon phosphor accents */
@@ -592,6 +592,18 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
 .jk-null{color:var(--jk-null);font-style:italic}
 .jk-punc{color:var(--jk-punc)}
 
+/* ===== #7 Collapsible JSON ===== */
+.jk-collapse-toggle{
+  cursor:pointer;color:var(--amber);user-select:none;
+  display:inline-block;min-width:1em;
+}
+.jk-collapse-toggle:hover{color:var(--green);text-shadow:0 0 4px var(--green)}
+.jk-collapse-summary{
+  color:var(--text-3);font-style:italic;cursor:pointer;
+}
+.jk-collapse-summary:hover{color:var(--amber)}
+.jk-collapsed-content{display:none}
+
 /* transmit progress — inline ASCII bar */
 .tx-line{color:var(--amber);text-shadow:0 0 6px rgba(255,176,0,.4)}
 .tx-bar-char{color:var(--amber);text-shadow:0 0 4px rgba(255,176,0,.5)}
@@ -955,6 +967,8 @@ html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-se
 <div class="crt-flicker"></div>
 <div class="crt-scanlines"></div>
 <div class="crt-vignette"></div>
+<div class="eva-warning top" id="evaWarnTop"><div class="warn-text">⚠ TRANSMITTING ⚠ BRIDGE LINK ACTIVE ⚠ DATA STREAM OPEN ⚠ SYNCHRONIZATION IN PROGRESS ⚠ LKBRIDGE ENGAGED ⚠ AWAITING RESPONSE ⚠&nbsp;&nbsp;&nbsp;</div></div>
+<div class="eva-warning bottom" id="evaWarnBot"><div class="warn-text">⚠ EVA-01 SYNC ⚠ A.T. FIELD STABLE ⚠ LCL PRESSURE NORMAL ⚠ PILOT NEURAL LINK ACTIVE ⚠ ENTRY PLUG SEALED ⚠ UMBILICAL CABLE CONNECTED ⚠&nbsp;&nbsp;&nbsp;</div></div>
 <div class="eva-alert" id="evaAlert"></div>
 
 <div class="shell">
@@ -6805,24 +6819,131 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   }
 
   // ===== JSON HIGHLIGHTER (modified: keys get data-field for D2 tooltips) =====
+  // ===== Collapsible JSON highlighter =====
+  // Parses JSON string and wraps {…} and […] blocks in collapsible spans.
+  // Click the opening brace to toggle collapse.
   function hlJSON(str){
     str = String(str);
     str = str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    var re = /("(?:\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(?:\s*:)?|\b(?:true|false)\b|\bnull\b|-?\d+(?:\.\d+)?(?:[eE][+\-]?\d+)?)/g;
-    return str.replace(re, function(m){
-      var cls;
-      if(/^"/.test(m)){
-        if(/:$/.test(m)){
-          cls = "jk-key";
-          var fieldName = m.replace(/^"|"$/g, "").replace(/:$/, "");
-          return '<span class="'+cls+'" data-field="'+esc(fieldName)+'">'+m+'</span>';
-        } else { cls = "jk-str"; }
+
+    // First, tokenize into structural parts
+    var result = "";
+    var i = 0;
+    var stack = []; // tracks open blocks: {push opening html}, on close pop and wrap
+    var tokens = [];
+
+    while(i < str.length){
+      // whitespace
+      if(str[i] === " " || str[i] === "\n" || str[i] === "\r" || str[i] === "\t"){
+        var ws = "";
+        while(i < str.length && (str[i] === " " || str[i] === "\n" || str[i] === "\r" || str[i] === "\t")){
+          ws += str[i]; i++;
+        }
+        tokens.push({type:"ws", val:ws});
+        continue;
       }
-      else if(/^(true|false)$/.test(m)){ cls="jk-bool"; }
-      else if(m==="null"){ cls="jk-null"; }
-      else { cls="jk-num"; }
-      return '<span class="'+cls+'">'+m+'</span>';
-    }).replace(/([{}\[\],])/g,'<span class="jk-punc">$1</span>');
+      // strings (with possible colon)
+      if(str[i] === '"'){
+        var s = '"';
+        i++;
+        while(i < str.length && str[i] !== '"'){
+          if(str[i] === "\\"){ s += str[i] + (str[i+1]||""); i += 2; }
+          else { s += str[i]; i++; }
+        }
+        s += '"'; i++;
+        // check for colon
+        var j = i;
+        while(j < str.length && (str[j] === " " || str[j] === "\t")) j++;
+        if(str[j] === ":"){
+          s += str.slice(i, j+1); i = j+1;
+          tokens.push({type:"key", val:s});
+        } else {
+          tokens.push({type:"str", val:s});
+        }
+        continue;
+      }
+      // numbers
+      if(str[i] === "-" || (str[i] >= "0" && str[i] <= "9")){
+        var num = "";
+        while(i < str.length && /[0-9eE+\-.]/.test(str[i])){ num += str[i]; i++; }
+        tokens.push({type:"num", val:num});
+        continue;
+      }
+      // booleans / null
+      if(str.substr(i, 4) === "true"){ tokens.push({type:"bool", val:"true"}); i += 4; continue; }
+      if(str.substr(i, 5) === "false"){ tokens.push({type:"bool", val:"false"}); i += 5; continue; }
+      if(str.substr(i, 4) === "null"){ tokens.push({type:"null", val:"null"}); i += 4; continue; }
+      // braces
+      if(str[i] === "{" || str[i] === "["){
+        tokens.push({type:"open", val:str[i]});
+        i++; continue;
+      }
+      if(str[i] === "}" || str[i] === "]"){
+        tokens.push({type:"close", val:str[i]});
+        i++; continue;
+      }
+      if(str[i] === "," || str[i] === ":"){
+        tokens.push({type:"punc", val:str[i]});
+        i++; continue;
+      }
+      // anything else
+      tokens.push({type:"text", val:str[i]});
+      i++;
+    }
+
+    // Now build the HTML with collapsible blocks using a stack
+    var html = "";
+    var blockStack = []; // each entry: {openToken: index, type: "{" or "["}
+
+    for(var t = 0; t < tokens.length; t++){
+      var tok = tokens[t];
+
+      if(tok.type === "open"){
+        var isObj = (tok.val === "{");
+        var blockId = "jk" + t;
+        blockStack.push({id: blockId, type: tok.val, count: 0, closeChar: isObj ? "}" : "]"});
+
+        // opening brace — clickable toggle
+        html += '<span class="jk-collapse-toggle" data-jk-block="'+blockId+'">'+tok.val+'</span>';
+        // start hidden content container
+        html += '<span class="jk-block-content" id="'+blockId+'">';
+      }
+      else if(tok.type === "close"){
+        if(blockStack.length > 0){
+          var block = blockStack.pop();
+          // close the content container
+          html += '</span>';
+          // closing brace — also clickable
+          html += '<span class="jk-collapse-toggle" data-jk-block="'+block.id+'">'+tok.val+'</span>';
+        } else {
+          html += '<span class="jk-punc">'+tok.val+'</span>';
+        }
+      }
+      else if(tok.type === "key"){
+        var fieldName = tok.val.replace(/^"/,"").replace(/"?\s*:$/,"");
+        html += '<span class="jk-key" data-field="'+esc(fieldName)+'">'+tok.val+'</span>';
+      }
+      else if(tok.type === "str"){
+        html += '<span class="jk-str">'+tok.val+'</span>';
+      }
+      else if(tok.type === "num"){
+        html += '<span class="jk-num">'+tok.val+'</span>';
+      }
+      else if(tok.type === "bool"){
+        html += '<span class="jk-bool">'+tok.val+'</span>';
+      }
+      else if(tok.type === "null"){
+        html += '<span class="jk-null">'+tok.val+'</span>';
+      }
+      else if(tok.type === "punc"){
+        html += '<span class="jk-punc">'+tok.val+'</span>';
+      }
+      else {
+        html += tok.val;
+      }
+    }
+
+    return html;
   }
 
   function safeParseJSON(text){
@@ -6961,87 +7082,14 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     return String(randInt(10000, 99999));
   }
 
-  // ===== SESSION PATIENT IDENTITY MAP =====
-  // Maps original patientId → consistent fictional identity (name, address, phone, ssn, dob, etc.)
-  // So if you look up patient 9324 then later do GetBalance for 9324, you get the same John Smith.
-  var patientIdentities = {};
-  var chartToPatient = {}; // chartNumber → patientId mapping for consistency
+  function randomizeResponse(obj){
+    if(!obj || typeof obj !== "object") return obj;
+    if(Array.isArray(obj)){ return obj.map(randomizeResponse); }
 
-  function getPatientIdentity(originalId){
-    // check if this ID maps to an existing identity (either as original or as newPatientId)
-    if(patientIdentities[originalId]) return patientIdentities[originalId];
-    // check if this is a newPatientId we already assigned
-    for(var existingId in patientIdentities){
-      if(patientIdentities[existingId].newPatientId === originalId) return patientIdentities[existingId];
-    }
-    // also check chartNumber
-    for(var existingId2 in patientIdentities){
-      if(patientIdentities[existingId2].chartNumber === originalId) return patientIdentities[existingId2];
-    }
+    // pick one consistent name + address pair for this entire object
     var nameIdx = randInt(0, FICTIONAL_NAMES.length - 1);
     var addrIdx = randInt(0, FICTIONAL_ADDRESSES.length - 1);
-    var identity = {
-      nameIdx: nameIdx,
-      addrIdx: addrIdx,
-      firstName: FICTIONAL_NAMES[nameIdx][0],
-      lastName: FICTIONAL_NAMES[nameIdx][1],
-      address1: FICTIONAL_ADDRESSES[addrIdx][0] + " " + FICTIONAL_ADDRESSES[addrIdx][1],
-      city: FICTIONAL_ADDRESSES[addrIdx][2],
-      state: FICTIONAL_ADDRESSES[addrIdx][3],
-      zip: randZip(),
-      homePhone: randPhone(),
-      workPhone: randPhone(),
-      mobilePhone: randPhone(),
-      email: FICTIONAL_NAMES[nameIdx][0].toLowerCase() + "." + FICTIONAL_NAMES[nameIdx][1].toLowerCase().replace(/[^a-z]/g,"") + "@email.com",
-      dob: randDate(),
-      ssn1: randInt(100,899), ssn2: randInt(10,99), ssn3: randInt(1000,9999),
-      sex: ["M","F"][randInt(0,1)],
-      newPatientId: randNumStr(),
-      chartNumber: randNumStr()
-    };
-    patientIdentities[originalId] = identity;
-    return identity;
-  }
-
-  function randomizeResponse(obj, originalPatientId){
-    if(!obj || typeof obj !== "object") return obj;
-    if(Array.isArray(obj)){ return obj.map(function(item){ return randomizeResponse(item, originalPatientId); }); }
-
-    // detect patientId in this object to maintain identity consistency
-    var pid = null;
-    var hasPatientFields = false;
-    for(var k in obj){
-      var kl = k.toLowerCase();
-      if(kl === "patientid" && typeof obj[k] === "string"){ pid = obj[k]; }
-      if(kl === "patient" && typeof obj[k] === "string" && /^\d+$/.test(obj[k])){ pid = obj[k]; }
-      if(kl === "firstname" || kl === "lastname" || kl === "dob" || kl === "dateofbirth"){ hasPatientFields = true; }
-    }
-    // if this object has patient fields but no patientId, use the "id" field as patientId
-    if(!pid && hasPatientFields){
-      for(var k2 in obj){
-        if(k2.toLowerCase() === "id" && typeof obj[k2] === "string"){ pid = obj[k2]; break; }
-        if(k2.toLowerCase() === "chartnumber" && typeof obj[k2] === "string"){ pid = obj[k2]; break; }
-      }
-    }
-    // if we have an originalPatientId from the request, it takes priority — 
-    // the user asked for this specific patient, so use it for identity lookup
-    if(originalPatientId) pid = originalPatientId;
-
-    // get or create a consistent identity for this patient
-    var identity = pid ? getPatientIdentity(pid) : {
-      nameIdx: randInt(0, FICTIONAL_NAMES.length - 1),
-      addrIdx: randInt(0, FICTIONAL_ADDRESSES.length - 1),
-      firstName: FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][0],
-      lastName: FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][1],
-      address1: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][0] + " " + FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][1],
-      city: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][2],
-      state: FICTIONAL_ADDRESSES[randInt(0,FICTIONAL_ADDRESSES.length-1)][3],
-      zip: randZip(), homePhone: randPhone(), workPhone: randPhone(), mobilePhone: randPhone(),
-      email: "patient@email.com", dob: randDate(),
-      ssn1: randInt(100,899), ssn2: randInt(10,99), ssn3: randInt(1000,9999),
-      sex: "M", newPatientId: randNumStr(), chartNumber: randNumStr()
-    };
-
+    // pick one consistent appointment status for this object
     var apptStatus = APPT_STATUSES[randInt(0, APPT_STATUSES.length - 1)];
     var apptNote = APPT_NOTES[randInt(0, APPT_NOTES.length - 1)];
 
@@ -7051,39 +7099,35 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       var lk = key.toLowerCase();
       var val = obj[key];
 
+      // strings — replace based on field name
       if(typeof val === "string"){
-        // names — use the consistent identity
-        if(lk === "firstname"){ result[key] = identity.firstName; continue; }
-        if(lk === "lastname"){ result[key] = identity.lastName; continue; }
+        // names
+        if(lk === "firstname"){ result[key] = FICTIONAL_NAMES[nameIdx][0]; continue; }
+        if(lk === "lastname"){ result[key] = FICTIONAL_NAMES[nameIdx][1]; continue; }
         if(lk === "middlename"){ result[key] = FICTIONAL_NAMES[randInt(0,FICTIONAL_NAMES.length-1)][0].charAt(0); continue; }
-        if(lk === "preferredname"){ result[key] = identity.firstName; continue; }
-        if(lk === "name"){ result[key] = identity.firstName + " " + identity.lastName; continue; }
+        if(lk === "preferredname"){ result[key] = FICTIONAL_NAMES[nameIdx][0]; continue; }
+        if(lk === "name"){ result[key] = FICTIONAL_NAMES[nameIdx][0] + " " + FICTIONAL_NAMES[nameIdx][1]; continue; }
 
-        // IDs — always replace, even non-numeric like "abc"
-        if(lk === "patientid" || lk === "alternatepatientid"){
-          result[key] = identity.newPatientId; continue;
-        }
-        if(lk === "chartnumber"){ result[key] = identity.chartNumber; continue; }
-        if(lk === "appointmentid"){ result[key] = randNumStr(); continue; }
-        if(lk === "id"){
-          // if in patient context, use the consistent patient ID
-          if(hasPatientFields && identity.newPatientId){ result[key] = identity.newPatientId; continue; }
-          result[key] = randNumStr(); continue;
+        // IDs — random 4-10 digit numbers
+        if(lk === "patientid" || lk === "chartnumber" || lk === "appointmentid" || lk === "id" || lk === "alternatepatientid"){
+          if(/^\d+$/.test(val)){ result[key] = randNumStr(); continue; }
         }
 
-        // appointment status
+        // appointment status — use the consistent apptStatus for this object
         if(lk === "status"){ result[key] = apptStatus.text; continue; }
         if(lk === "rawstatus"){ result[key] = apptStatus.code; continue; }
         if(lk === "statustext" || (lk === "sourcetext" && /appoint/i.test(JSON.stringify(obj)))){
           result[key] = apptStatus.text; continue;
         }
 
-        // notes
-        if(lk === "notes" && val !== null){ result[key] = apptNote; continue; }
+        // notes — random appointment note
+        if(lk === "notes" && val !== null){
+          result[key] = apptNote; continue;
+        }
 
         // dates
         if(lk === "raw" && typeof obj["value"] !== "undefined"){
-          if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(val)){ result[key] = identity.dob; continue; }
+          if(/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(val)){ result[key] = randDate(); continue; }
         }
         if(lk === "created" || lk === "modified" || lk === "deploymentdate" || lk === "publisheddate"){
           if(val && val.length > 8){ result[key] = randInt(2015,2024) + "-" + String(randInt(1,12)).padStart(2,"0") + "-" + String(randInt(1,28)).padStart(2,"0") + "T" + String(randInt(0,23)).padStart(2,"0") + ":" + String(randInt(0,59)).padStart(2,"0") + ":" + String(randInt(0,59)).padStart(2,"0"); continue; }
@@ -7092,47 +7136,46 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
           result[key] = randInt(2020,2024) + "-" + String(randInt(1,12)).padStart(2,"0") + "-" + String(randInt(1,28)).padStart(2,"0") + "T" + String(randInt(7,17)).padStart(2,"0") + ":" + (randInt(0,11)*5).toString().padStart(2,"0") + ":00-04:00"; continue;
         }
 
-        // phones — use consistent identity
-        if(lk === "homephone"){ result[key] = identity.homePhone; continue; }
-        if(lk === "workphone"){ result[key] = identity.workPhone; continue; }
-        if(lk === "mobilephone" || lk === "cellphone"){ result[key] = identity.mobilePhone; continue; }
-        if(lk === "phone"){ if(val && val.length > 5){ result[key] = identity.homePhone; continue; } }
+        // phones
+        if(lk === "homephone" || lk === "workphone" || lk === "mobilephone" || lk === "phone" || lk === "cellphone"){
+          if(val && val.length > 5){ result[key] = randPhone(); continue; }
+        }
 
-        // addresses — use consistent identity
-        if(lk === "address1"){ result[key] = identity.address1; continue; }
-        if(lk === "address2"){ result[key] = val; continue; } // keep null/empty
-        if(lk === "city"){ result[key] = identity.city; continue; }
-        if(lk === "state"){ result[key] = identity.state; continue; }
-        if(lk === "zip" || lk === "zipcode"){ result[key] = identity.zip; continue; }
-        if(lk === "email"){ result[key] = identity.email; continue; }
-        if(lk === "sex"){ result[key] = identity.sex; continue; }
+        // addresses
+        if(lk === "address1"){ var a = FICTIONAL_ADDRESSES[addrIdx]; result[key] = a[0] + " " + a[1]; continue; }
+        if(lk === "city"){ result[key] = FICTIONAL_ADDRESSES[addrIdx][2]; continue; }
+        if(lk === "state"){ result[key] = FICTIONAL_ADDRESSES[addrIdx][3]; continue; }
+        if(lk === "zip" || lk === "zipcode"){ result[key] = randZip(); continue; }
+        if(lk === "email"){ result[key] = FICTIONAL_NAMES[nameIdx][0].toLowerCase() + "." + FICTIONAL_NAMES[nameIdx][1].toLowerCase().replace(/[^a-z]/g,"") + "@email.com"; continue; }
 
         // SSN
-        if(lk === "socialsecuritynumber"){ continue; }
+        if(lk === "socialsecuritynumber"){ continue; } // handled as object below
 
-        // numeric strings
+        // numeric strings that aren't IDs but look like they should be randomized
         if(/^\d{4,10}$/.test(val) && lk !== "moduleversion"){
           result[key] = randNumStr(); continue;
         }
 
-        result[key] = val;
+        result[key] = val; // keep as-is
       }
+      // objects — recurse, but handle specific structures
       else if(typeof val === "object" && val !== null){
-        // date objects
+        // date objects with "value" (/Date(...)/) and "raw"
         if(val.value && val.raw && typeof val.raw === "string"){
-          var newObj = randomizeResponse(val, pid);
-          newObj.raw = identity.dob;
-          newObj.value = "/Date(" + (new Date(identity.dob).getTime()) + ")/";
+          var newObj = randomizeResponse(val);
+          newObj.raw = randDate();
+          newObj.value = "/Date(" + (new Date(randDate()).getTime()) + ")/";
           result[key] = newObj; continue;
         }
-        // SSN object
+        // SSN object with formatted + raw
         if(lk === "socialsecuritynumber" && val.formatted){
-          result[key] = { formatted: identity.ssn1+"-"+identity.ssn2+"-"+identity.ssn3, raw: String(identity.ssn1)+String(identity.ssn2)+String(identity.ssn3) }; continue;
+          var ssn1 = randInt(100,899), ssn2 = randInt(10,99), ssn3 = randInt(1000,9999);
+          result[key] = { formatted: ssn1+"-"+ssn2+"-"+ssn3, raw: String(ssn1)+String(ssn2)+String(ssn3) }; continue;
         }
-        result[key] = randomizeResponse(val, pid);
+        result[key] = randomizeResponse(val);
       }
       else {
-        result[key] = val;
+        result[key] = val; // numbers, booleans, null — keep as-is
       }
     }
     return result;
@@ -7612,6 +7655,9 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     var lat = 350 + Math.floor(Math.random()*450); var validation = validateRequest(ep, parsed); var finalStatus = validation.valid ? (state.simStatus||200) : validation.code;
     state.busy = true; setStatus(ep.name, (ep.method||"POST").toUpperCase(), "TRANSMIT"); setCrtPath(ep.name, "TRANSMIT", "var(--amber)");
     document.body.classList.add("transmitting");
+    showEvaWarning(true);
+    // shockwave — ring emanates from the Y/N button position
+    fireShockwave(block);
     var area = block.querySelector(".resp-area"); var t0 = performance.now();
     var html = '<div class="tline tx-line" style="margin-top:8px">» transmitting</div>';
     if(!parsed.ok){ html += '<div class="tline t-err">  ▌ payload parse error: '+esc(parsed.err)+'</div>'; }
@@ -7634,6 +7680,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       renderResponse(ep, parsed, validation, finalStatus, elapsed, block);
       state.busy = false; setCrtPath(ep.name, "COMPLETE", "var(--green)");
       document.body.classList.remove("transmitting");
+      showEvaWarning(false);
       if(finalStatus >= 400) triggerAlert();
       setStatus(ep.name, (ep.method||"POST").toUpperCase(), finalStatus>=400?"ERROR":"COMPLETE", elapsed);
     }, Math.max(lat, 120));
@@ -7646,16 +7693,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(status>=500){ var scr = $("crtScreen"); if(scr){ scr.classList.add("glitch"); setTimeout(function(){ scr.classList.remove("glitch"); }, 400); } }
     var bodyObj;
     if(isErr){ bodyObj = !validation.valid ? errorBody(ep, status, validation.reason, validation.detail) : errorBody(ep, status); }
-    else {
-      // extract the patientId from the request to maintain identity consistency
-      var reqPid = null;
-      if(parsed.ok && parsed.value){
-        if(parsed.value.patientId) reqPid = parsed.value.patientId;
-        else if(parsed.value.patient) reqPid = parsed.value.patient;
-        else if(parsed.value.request && parsed.value.request.patientId) reqPid = parsed.value.request.patientId;
-      }
-      bodyObj = ep.sampleResponse != null ? randomizeResponse(cloneObj(ep.sampleResponse), reqPid) : {};
-    }
+    else { bodyObj = ep.sampleResponse != null ? randomizeResponse(cloneObj(ep.sampleResponse)) : {}; }
     var html = '<div class="tline" style="margin-top:10px"><span class="t-section">» response</span> <span class="'+statusCls+'">'+esc(status+' '+statusText(status))+'</span> <span class="t-dim">· '+latency+'ms</span></div>';
     html += '<div class="resp-seamless '+blockCls+'">';
     html += '<span class="'+statusCls+'">HTTP/1.1 '+esc(status+' '+statusText(status))+'</span>\n';
@@ -7849,9 +7887,41 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   }
   function clearLog(){ while(crtBody.firstChild){ crtBody.removeChild(crtBody.firstChild); } state.sessionCount = 0; echoLine("// log cleared", "t-dim"); }
 
-  // ===== D2: TOOLTIPS =====
+  // ===== D2: TOOLTIPS + #7 COLLAPSIBLE JSON =====
   function setupTooltips(){
     var tt = $("tooltip"); if(!tt) return;
+
+    // Collapsible JSON — delegated click handler
+    crtBody.addEventListener("click", function(e){
+      var toggle = e.target.closest(".jk-collapse-toggle");
+      if(!toggle) return;
+      var blockId = toggle.getAttribute("data-jk-block");
+      if(!blockId) return;
+      var content = document.getElementById(blockId);
+      if(!content) return;
+
+      if(content.style.display === "none"){
+        // expand
+        content.style.display = "";
+        // remove summary
+        var summary = content.parentElement.querySelector('.jk-collapse-summary[data-for="'+blockId+'"]');
+        if(summary) summary.remove();
+        toggle.textContent = toggle.textContent === "▶" ? "{" : (toggle.textContent === "▶" ? "[" : toggle.textContent);
+      } else {
+        // collapse — count items
+        var inner = content.textContent;
+        var items = (inner.match(/,/g) || []).length + 1;
+        var isObj = toggle.textContent === "{";
+        var summaryText = isObj ? "{…}" : "["+items+" items]";
+        content.style.display = "none";
+        // add summary after the toggle
+        var sum = document.createElement("span");
+        sum.className = "jk-collapse-summary";
+        sum.setAttribute("data-for", blockId);
+        sum.textContent = summaryText;
+        toggle.parentNode.insertBefore(sum, toggle.nextSibling);
+      }
+    });
 
     function showTooltip(el){
       var field = el.getAttribute("data-field");
@@ -8113,18 +8183,8 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   }
 
   // ===== FONT + THEME =====
-  function applyFontScale(){
-    var s = state.fontScale;
-    // use zoom on the entire workspace — scales everything proportionally
-    var ws = document.querySelector(".workspace");
-    if(ws) ws.style.zoom = s;
-  }
-  function applySbFontScale(){
-    var s = state.sbFontScale;
-    // zoom just the sidebar
-    var sb = document.getElementById("sidebar");
-    if(sb) sb.style.zoom = s;
-  }
+  function applyFontScale(){ var s = state.fontScale; crtBody.style.fontSize = (13.5 * s) + "px"; document.documentElement.style.fontSize = (100 * s) + "px"; }
+  function applySbFontScale(){ var s = state.sbFontScale; if(sbList) sbList.style.fontSize = (12 * s) + "px"; var c = document.querySelector(".sb-count"); if(c) c.style.fontSize = (10 * s) + "px"; var si = document.querySelector(".sb-search input"); if(si) si.style.fontSize = (12 * s) + "px"; }
   function applyTheme(){ document.documentElement.setAttribute("data-theme", state.theme); var b = $("themeToggle"); if(b) b.textContent = state.theme==="dark" ? "☀ light" : "☾ dark"; }
 
   // ===== #1 COMMAND PALETTE (Ctrl+K) =====
@@ -8289,6 +8349,21 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     }, 100);
   }
 
+  // ===== TRANSMIT SHOCKWAVE — ring emanates from the confirm line =====
+  function fireShockwave(block){
+    var confirmLine = block.querySelector(".confirm-line");
+    if(!confirmLine) return;
+    var r = confirmLine.getBoundingClientRect();
+    var cx = r.left + r.width / 2;
+    var cy = r.top + r.height / 2;
+    var wave = document.createElement("div");
+    wave.className = "shockwave fire";
+    wave.style.left = (cx - 10) + "px";
+    wave.style.top = (cy - 10) + "px";
+    document.body.appendChild(wave);
+    setTimeout(function(){ wave.remove(); }, 800);
+  }
+
   // ===== RESPONSE DATA BURST — radial glow pulse =====
   function fireDataBurst(area){
     var r = area.getBoundingClientRect();
@@ -8437,10 +8512,10 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
 
   // --- EVA warning bars during transmit ---
   function showEvaWarning(show){
-    var top = $("evaWarnTop");
-    if(top){
-      if(show){ top.classList.add("show"); }
-      else { top.classList.remove("show"); }
+    var top = $("evaWarnTop"), bot = $("evaWarnBot");
+    if(top && bot){
+      if(show){ top.classList.add("show"); bot.classList.add("show"); }
+      else { top.classList.remove("show"); bot.classList.remove("show"); }
     }
   }
 
