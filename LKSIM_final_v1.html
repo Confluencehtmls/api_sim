@@ -7234,6 +7234,18 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   // ===== SESSION PATIENT IDENTITY MAP =====
   var patientIdentities = {};
 
+  // Pre-populate Jean-Luc Picard so he's always findable via SmartSearch,
+  // GetPatient, or GetPatientSummary without needing CreatePatient first.
+  // patientId = "1701D", chartNumber = "NCC1701D"
+  patientIdentities["1701D"] = {
+    firstName: "Jean-Luc", lastName: "Picard",
+    address1: "Captain's Quarters", city: "Sector 001", state: "FE", zip: "17010",
+    homePhone: "555-1701", workPhone: "555-1701", mobilePhone: "555-1701",
+    email: "jlpicard@starfleet.mil", dob: "07/13/2305",
+    ssn1: 230, ssn2: 54, ssn3: 1701,
+    sex: "M", newPatientId: "1701D", chartNumber: "NCC1701D", externalId: "1701D"
+  };
+
   function getPatientIdentity(originalId){
     if(patientIdentities[originalId]) return patientIdentities[originalId];
     for(var existingId in patientIdentities){
@@ -7976,11 +7988,11 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       }
       bodyObj = randomizeResponse(clonedResp, reqPid);
     }
-    // Easter egg: if the response contains "Jean-Luc Picard", play the "Make it so" clip
+    // Easter egg: if the response contains "Jean-Luc" or "Picard", play the "Make it so" clip
     if(!isErr){
       try {
         var respStr = JSON.stringify(bodyObj).toLowerCase();
-        if(respStr.indexOf("jean-luc") !== -1 && respStr.indexOf("picard") !== -1){
+        if(respStr.indexOf("jean-luc") !== -1 || respStr.indexOf("picard") !== -1){
           var egg = document.getElementById("picardEgg");
           if(egg){ egg.currentTime = 0; egg.play().catch(function(){}); }
         }
