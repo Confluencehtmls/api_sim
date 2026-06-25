@@ -7126,6 +7126,31 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     return null;
   }
 
+  // create a patient identity from CreatePatient request demographics
+  // stores it in patientIdentities under the new patientId so SmartSearch can find it later
+  function createPatientIdentity(details){
+    var newPid = randNumStr();
+    var identity = {
+      firstName: details.firstName || "Unknown",
+      lastName: details.lastName || "Patient",
+      address1: details.address1 || "",
+      city: details.city || "",
+      state: details.state || "",
+      zip: details.zip || randZip(),
+      homePhone: details.homePhone || randPhone(),
+      workPhone: randPhone(),
+      mobilePhone: details.mobilePhone || randPhone(),
+      email: details.email || "patient@email.com",
+      dob: details.dateOfBirth ? details.dateOfBirth.split("T")[0].replace(/-/g,"/") : randDate(),
+      ssn1: randInt(100,899), ssn2: randInt(10,99), ssn3: randInt(1000,9999),
+      sex: details.sex || ["M","F"][randInt(0,1)],
+      newPatientId: newPid,
+      chartNumber: randNumStr()
+    };
+    patientIdentities[newPid] = identity;
+    return identity;
+  }
+
   function randomizeResponse(obj, originalPatientId){
     if(!obj || typeof obj !== "object") return obj;
     if(Array.isArray(obj)){ return obj.map(function(item){ return randomizeResponse(item, originalPatientId); }); }
@@ -7175,6 +7200,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         if(lk === "preferredname"){ result[key] = identity.firstName; continue; }
         if(lk === "name"){ result[key] = identity.firstName + " " + identity.lastName; continue; }
         if(lk === "patientid" || lk === "alternatepatientid"){ result[key] = identity.newPatientId; continue; }
+        if(lk === "createdpatientid"){ result[key] = val; continue; }
         if(lk === "chartnumber"){ result[key] = identity.chartNumber; continue; }
         if(lk === "appointmentid"){ result[key] = randNumStr(); continue; }
         if(lk === "id"){
@@ -7774,6 +7800,12 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
             zipCode: matchedIdentity.zip
           };
         }
+      }
+      // CreatePatient: build an identity from the request demographics and return the new patientId
+      if(ep.id === "updatepatient-createpatient" && parsed.ok && parsed.value && parsed.value.request && parsed.value.request.createPatient && parsed.value.request.createPatient.createPatientDetails){
+        var cpDetails = parsed.value.request.createPatient.createPatientDetails;
+        var newIdentity = createPatientIdentity(cpDetails);
+        clonedResp.createdPatientId = newIdentity.newPatientId;
       }
       bodyObj = randomizeResponse(clonedResp, reqPid);
     }
