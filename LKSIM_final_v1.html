@@ -6989,6 +6989,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
 
   // ===== RESPONSE RANDOMIZER — fictional data injection =====
   var FICTIONAL_NAMES = [
+    // Marvel Comics
     ["Barry","Allen"],["Peter","Parker"],["Bruce","Wayne"],["Clark","Kent"],
     ["Diana","Prince"],["Tony","Stark"],["Steve","Rogers"],["Natasha","Romanoff"],
     ["Wanda","Maximoff"],["Stephen","Strange"],["T'Challa","Udaka"],["Carol","Danvers"],
@@ -6998,12 +6999,159 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     ["Matt","Murdock"],["Jessica","Jones"],["Luke","Cage"],["Danny","Rand"],
     ["Frank","Castle"],["Elektra","Natchios"],["Hal","Jordan"],["Oliver","Queen"],
     ["Kara","Zor-El"],["Dick","Grayson"],["Jason","Todd"],["Tim","Drake"],
-    ["Barbara","Gordon"],["Raven","Roth"],["Starfire","Kori"],["Beast","Boy"],
+    ["Barbara","Gordon"],["Raven","Roth"],["Starfire","Kori"],["Garfield","Logan"],
     ["Mariko","Yashida"],["Yuriko","Oyama"],["Keniuchio","Harada"],["Shiro","Yoshida"],
     ["Cho","Linh"],["Amara","Aquilla"],["Roberto","Da Costa"],["Sam","Guthrie"],
     ["Dani","Moonstar"],["Xi'an","Coy Manh"],["Rahne","Sinclair"],["Illyana","Rasputin"],
     ["Kurt","Wagner"],["Kitty","Pryde"],["Piotr","Rasputin"],["Remy","LeBeau"],
-    ["Anna","Marie"],["Jubilation","Lee"],["Bobby","Drake"],["Warren","Worthington"]
+    ["Anna","Marie"],["Jubilation","Lee"],["Bobby","Drake"],["Warren","Worthington"],
+    // Star Wars
+    ["Luke","Skywalker"],["Leia","Organa"],["Han","Solo"],["Rey","Palpatine"],
+    ["Finn","Storm"],["Poe","Dameron"],["Kylo","Ren"],["Ben","Solo"],
+    ["Anakin","Skywalker"],["Padme","Amidala"],["Obi-Wan","Kenobi"],["Qui-Gon","Jinn"],
+    ["Mace","Windu"],["Lando","Calrissian"],["Chewbacca","Wookiee"],["Boba","Fett"],
+    ["Jango","Fett"],["Asajj","Ventress"],["Sabine","Wren"],["Ezra","Bridger"],
+    // Harry Potter
+    ["Harry","Potter"],["Hermione","Granger"],["Ron","Weasley"],["Ginny","Weasley"],
+    ["Neville","Longbottom"],["Luna","Lovegood"],["Draco","Malfoy"],["Severus","Snape"],
+    ["Albus","Dumbledore"],["Minerva","McGonagall"],["Rubeus","Hagrid"],["Sirius","Black"],
+    ["Remus","Lupin"],["Nymphadora","Tonks"],["Fred","Weasley"],["George","Weasley"],
+    ["Cedric","Diggory"],["Cho","Chang"],["Fleur","Delacour"],["Viktor","Krum"],
+    // Lord of the Rings
+    ["Frodo","Baggins"],["Samwise","Gamgee"],["Gandalf","Grey"],["Aragorn","Elessar"],
+    ["Legolas","Greenleaf"],["Gimli","Son of Gloin"],["Boromir","Gondor"],["Faramir","Gondor"],
+    ["Eowyn","Shieldmaiden"],["Eomer","Rohan"],["Theoden","King"],["Bilbo","Baggins"],
+    ["Galadriel","Lothlorien"],["Elrond","Rivendell"],["Arwen","Undomiel"],["Gollum","Smeagol"],
+    // Game of Thrones
+    ["Jon","Snow"],["Daenerys","Targaryen"],["Tyrion","Lannister"],["Arya","Stark"],
+    ["Sansa","Stark"],["Bran","Stark"],["Cersei","Lannister"],["Jaime","Lannister"],
+    ["Ned","Stark"],["Catelyn","Stark"],["Robb","Stark"],["Theon","Greyjoy"],
+    ["Brienne","Tarth"],["Davos","Seaworth"],["Samwell","Tarly"],["Melisandre","Asshai"],
+    // Star Trek
+    ["James","Kirk"],["Spock","Vulcan"],["Leonard","McCoy"],["Montgomery","Scott"],
+    ["Hikaru","Sulu"],["Nyota","Uhura"],["Pavel","Chekov"],["Jean-Luc","Picard"],
+    ["William","Riker"],["Data","Soong"],["Deanna","Troi"],["Worf","Son of Mogh"],
+    ["Geordi","La Forge"],["Beverly","Crusher"],["Kathryn","Janeway"],["Chakotay","Maquis"],
+    // Doctor Who
+    ["Rose","Tyler"],["Martha","Jones"],["Donna","Noble"],["Amy","Pond"],
+    ["Rory","Williams"],["Clara","Oswald"],["Bill","Potts"],["Jack","Harkness"],
+    ["Sarah Jane","Smith"],["Mickey","Smith"],["Wilfred","Mott"],["River","Song"],
+    // Anime - Naruto
+    ["Naruto","Uzumaki"],["Sasuke","Uchiha"],["Sakura","Haruno"],["Kakashi","Hatake"],
+    ["Hinata","Hyuga"],["Shikamaru","Nara"],["Ino","Yamanaka"],["Choji","Akimichi"],
+    ["Rock","Lee"],["Neji","Hyuga"],["Tenten","Hatake"],["Gaara","Sabaku"],
+    ["Kiba","Inuzuka"],["Shino","Aburame"],["Tsunade","Senju"],["Jiraiya","Toad"],
+    // Anime - One Piece
+    ["Monkey D.","Luffy"],["Roronoa","Zoro"],["Nami","Cat Burglar"],["Sanji","Vinsmoke"],
+    ["Tony Tony","Chopper"],["Nico","Robin"],["Franky","Shipwright"],["Brook","Soul King"],
+    ["Usopp","Sogeking"],["Jinbe","Helmsman"],["Trafalgar","Law"],["Portgas","Ace"],
+    // Anime - Dragon Ball
+    ["Goku","Son"],["Vegeta","Prince"],["Gohan","Son"],["Goten","Son"],
+    ["Trunks","Brief"],["Piccolo","Junior"],["Krillin","Monk"],["Tien","Shinhan"],
+    ["Yamcha","Desert Bandit"],["Bulma","Brief"],["Chi-Chi","Ox Princess"],["Frieza","Emperor"],
+    // Anime - Attack on Titan
+    ["Eren","Yeager"],["Mikasa","Ackerman"],["Armin","Arlelt"],["Levi","Ackerman"],
+    ["Hange","Zoe"],["Erwin","Smith"],["Jean","Kirstein"],["Sasha","Blouse"],
+    ["Connie","Springer"],["Historia","Reiss"],["Reiner","Braun"],["Bertholdt","Hoover"],
+    // Anime - Death Note / Fullmetal / Bleach
+    ["Light","Yagami"],["L","Lawliet"],["Misa","Amane"],["Near","River"],
+    ["Edward","Elric"],["Alphonse","Elric"],["Roy","Mustang"],["Winry","Rockbell"],
+    ["Ichigo","Kurosaki"],["Rukia","Kuchiki"],["Orihime","Inoue"],["Uryu","Ishida"],
+    ["Yasutora","Sado"],["Renji","Abarai"],["Byakuya","Kuchiki"],["Toshiro","Hitsugaya"],
+    // Anime - My Hero Academia / Jujutsu Kaisen / Demon Slayer
+    ["Izuku","Midoriya"],["Katsuki","Bakugo"],["Shoto","Todoroki"],["Ochaco","Uraraka"],
+    ["Tenya","Iida"],["Tsuyu","Asui"],["Eijiro","Kirishima"],["Fumikage","Tokoyami"],
+    ["Yuji","Itadori"],["Megumi","Fushiguro"],["Nobara","Kugisaki"],["Satoru","Gojo"],
+    ["Tanjiro","Kamado"],["Nezuko","Kamado"],["Zenitsu","Agatsuma"],["Inosuke","Hashibira"],
+    // Anime - Studio Ghibli
+    ["Chihiro","Ogino"],["Haku","River Spirit"],["Sophie","Hatter"],["Howl","Pendragon"],
+    ["Ashitaka","Emishi"],["San","Wolf Princess"],["Sheeta","Laputa"],["Pazu","Mining Town"],
+    ["Nausicaa","Valley"],["Kiki","Witch"],["Totoro","Forest Spirit"],["Ponyo","Goldfish"],
+    // Anime - Cowboy Bebop / Trigun / Evangelion
+    ["Spike","Spiegel"],["Jet","Black"],["Faye","Valentine"],["Ed","Wong Hau Pepelu Tivrusky"],
+    ["Vash","Stampede"],["Knives","Millions"],["Wolfwood","Nicholas"],["Meryl","Strife"],
+    ["Shinji","Ikari"],["Rei","Ayanami"],["Asuka","Langley"],["Misato","Katsuragi"],
+    // Movies - Back to the Future / Ghostbusters / Matrix
+    ["Marty","McFly"],["Doc","Brown"],["Biff","Tannen"],["Jennifer","Parker"],
+    ["Peter","Venkman"],["Egon","Spengler"],["Ray","Stantz"],["Winston","Zeddemore"],
+    ["Neo","Anderson"],["Trinity","Matrix"],["Morpheus","Nebuchadnezzar"],["Agent","Smith"],
+    // Movies - Indiana Jones / Jurassic Park / Terminator
+    ["Indiana","Jones"],["Marion","Ravenwood"],["Sallah","Cairo"],["Elsa","Schneider"],
+    ["Alan","Grant"],["Ellie","Sattler"],["Ian","Malcolm"],["John","Hammond"],
+    ["Sarah","Connor"],["Kyle","Reese"],["John","Connor"],["T-800","Cyberdyne"],
+    // TV - Breaking Bad / Stranger Things / The Office
+    ["Walter","White"],["Jesse","Pinkman"],["Saul","Goodman"],["Mike","Ehrmantraut"],
+    ["Jim","Hopper"],["Joyce","Byers"],["Eleven","Hopper"],["Steve","Harrington"],
+    ["Dustin","Henderson"],["Lucas","Sinclair"],["Max","Mayfield"],["Robin","Buckley"],
+    ["Michael","Scott"],["Dwight","Schrute"],["Jim","Halpert"],["Pam","Beesly"],
+    // TV - Friends / Seinfeld / Simpsons
+    ["Rachel","Green"],["Monica","Geller"],["Ross","Geller"],["Chandler","Bing"],
+    ["Joey","Tribbiani"],["Phoebe","Buffay"],["Jerry","Seinfeld"],["George","Costanza"],
+    ["Elaine","Benes"],["Cosmo","Kramer"],["Homer","Simpson"],["Marge","Simpson"],
+    ["Bart","Simpson"],["Lisa","Simpson"],["Maggie","Simpson"],["Ned","Flanders"],
+    // TV - Futurama / Rick and Morty / Avatar
+    ["Philip","Fry"],["Turanga","Leela"],["Bender","Rodriguez"],["Amy","Wong"],
+    ["Hermes","Conrad"],["Zoidberg","Decapodian"],["Rick","Sanchez"],["Morty","Smith"],
+    ["Summer","Smith"],["Beth","Smith"],["Jerry","Smith"],["Squanchy","Smith"],
+    ["Aang","Airbender"],["Katara","Water Tribe"],["Sokka","Water Tribe"],["Zuko","Fire Nation"],
+    ["Toph","Beifong"],["Iroh","Dragon of the West"],["Azula","Fire Nation"],["Appa","Sky Bison"],
+    // Movies - Pulp Fiction / The Godfather / Goodfellas
+    ["Vincent","Vega"],["Jules","Winnfield"],["Mia","Wallace"],["Butch","Coolidge"],
+    ["Michael","Corleone"],["Vito","Corleone"],["Sonny","Corleone"],["Tom","Hagen"],
+    ["Henry","Hill"],["Karen","Hill"],["Jimmy","Conway"],["Tommy","DeVito"],
+    // Movies - The Princess Bride / Starship Troopers / Aliens
+    ["Westley","Farm Boy"],["Buttercup","Princess"],["Inigo","Montoya"],["Fezzik","Giant"],
+    ["Johnny","Rico"],["Carmen","Ibanez"],["Dizzy","Flores"],["Carl","Jenkins"],
+    ["Ellen","Ripley"],["Dwayne","Hicks"],["Bishop","Android"],["Rebecca","Jorden"],
+    // TV - Sherlock / Doctor Who extras / X-Files
+    ["Sherlock","Holmes"],["John","Watson"],["Mycroft","Holmes"],["Molly","Hooper"],
+    ["Fox","Mulder"],["Dana","Scully"],["Walter","Skinner"],["Cigarette","Smoking Man"],
+    // Movies - Die Hard / Lethal Weapon / The Matrix
+    ["John","McClane"],["Holly","Gennero"],["Hans","Gruber"],["Al","Powell"],
+    ["Martin","Riggs"],["Roger","Murtaugh"],["Leo","Getz"],["Trish","Murtaugh"],
+    // Anime - Hunter x Hunter / JoJo / Chainsaw Man
+    ["Gon","Freecss"],["Killua","Zoldyck"],["Kurapika","Kurta"],["Leorio","Paradington"],
+    ["Hisoka","Morow"],["Chrollo","Lucilfer"],["Meruem","Ant King"],["Netero","Chairman"],
+    ["Jotaro","Kujo"],["Dio","Brando"],["Joseph","Joestar"],["Jolyne","Cujoh"],
+    ["Denji","Chainsaw"],["Power","Blood"],["Aki","Hayakawa"],["Makima","Control"],
+    // Movies - Marvel Cinematic Universe extras
+    ["Peter","Quill"],["Gamora","Zen"],["Drax","Destroyer"],["Rocket","Raccoon"],
+    ["Groot","Flora Colossus"],["Nebula","Cyborg"],["Mantis","Empath"],["Yondu","Ravager"],
+    ["Stephen","Strange"],["Wong","Kamar-Taj"],["Christine","Palmer"],["Karl","Mordo"],
+    ["Hope","Pym"],["Hank","Pym"],["Janet","Pym"],["Ava","Ghost"],
+    ["Shuri","Wakanda"],["Okoye","Dora"],["Nakia","War Dog"],["M'Baku","Jabari"],
+    ["Yelena","Belova"],["Alexei","Red Guardian"],["Melina","Vostokoff"],["Taskmaster","Dreykov"],
+    // TV - The Walking Dead / Lost / Westworld
+    ["Rick","Grimes"],["Michonne","Hawthorne"],["Daryl","Dixon"],["Carol","Peletier"],
+    ["Negan","Smith"],["Maggie","Greene"],["Glenn","Rhee"],["Carl","Grimes"],
+    ["Jack","Shephard"],["Kate","Austen"],["John","Locke"],["James","Ford"],
+    ["Hugo","Reyes"],["Sayid","Jarrah"],["Sun","Kwon"],["Jin","Kwon"],
+    ["Dolores","Abernathy"],["Maeve","Millay"],["Bernard","Lowe"],["Teddy","Flood"],
+    // Movies - The Dark Knight trilogy extras
+    ["Rachel","Dawes"],["Harvey","Dent"],["Alfred","Pennyworth"],["Lucius","Fox"],
+    ["Ra's","al Ghul"],["Talia","al Ghul"],["Bane","Mercenary"],["Selina","Kyle"],
+    // TV - Star Wars extras / Mandalorian
+    ["Din","Djarin"],["Grogu","Foundling"],["Cara","Dune"],["Greef","Karga"],
+    ["Moff","Gideon"],["Bo-Katan","Kryze"],["Ahsoka","Tano"],["Sabine","Wren"],
+    // Anime - Spy x Family / Frieren / Vinland Saga
+    ["Anya","Forger"],["Yor","Forger"],["Loid","Forger"],["Bond","Forger"],
+    ["Frieren","Elf"],["Himmel","Hero"],["Heiter","Priest"],["Fern","Apprentice"],
+    ["Thorfinn","Karlsefni"],["Canute","King"],["Askeladd","Viking"],["Einar","Farmhand"],
+    // Movies - The Lord of the Rings extras / Hobbit
+    ["Thorin","Oakenshield"],["Balin","Son of Fundin"],["Dwalin","Son of Fundin"],["Kili","Durin"],
+    ["Fili","Durin"],["Bofur","Toymaker"],["Bombur","Cook"],["Dori","Brother"],
+    // TV - The Boys / Invincible / Peacemaker
+    ["Billy","Butcher"],["Hughie","Campbell"],["Starlight","Annie"],["Queen","Maeve"],
+    ["Mark","Grayson"],["Amber","Freedman"],["William","Clockwell"],["Samantha","Wilkins"],
+    ["Christopher","Smith"],["Adrian","Chase"],["Leota","Adebayo"],["Emilia","Harcourt"],
+    // Anime - Pokemon / Digimon / Sailor Moon
+    ["Ash","Ketchum"],["Misty","Waterflower"],["Brock","Harrison"],["Gary","Oak"],
+    ["Tai","Kamiya"],["Matt","Ishida"],["Sora","Takenouchi"],["Izzy","Izumi"],
+    ["Usagi","Tsukino"],["Ami","Mizuno"],["Rei","Hino"],["Makoto","Kino"],
+    // Movies - The Hunger Games / Divergent / Twilight
+    ["Katniss","Everdeen"],["Peeta","Mellark"],["Gale","Hawthorne"],["Primrose","Everdeen"],
+    ["Tris","Prior"],["Four","Eaton"],["Caleb","Prior"],["Christina","Dauntless"],
+    ["Bella","Swan"],["Edward","Cullen"],["Jacob","Black"],["Alice","Cullen"]
   ];
 
   var FICTIONAL_ADDRESSES = [
@@ -7123,13 +7271,17 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     for(var existingId2 in patientIdentities){
       if(patientIdentities[existingId2].chartNumber === idStr) return { originalId: existingId2, identity: patientIdentities[existingId2] };
     }
+    for(var existingId3 in patientIdentities){
+      if(patientIdentities[existingId3].externalId === idStr) return { originalId: existingId3, identity: patientIdentities[existingId3] };
+    }
     return null;
   }
 
   // create a patient identity from CreatePatient request demographics
   // stores it in patientIdentities under the new patientId so SmartSearch can find it later
+  // if externalId is provided, use it as the newPatientId so the response returns the user's ID
   function createPatientIdentity(details){
-    var newPid = randNumStr();
+    var newPid = (details.externalId && String(details.externalId).trim()) ? String(details.externalId).trim() : randNumStr();
     var identity = {
       firstName: details.firstName || "Unknown",
       lastName: details.lastName || "Patient",
@@ -7145,7 +7297,8 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       ssn1: randInt(100,899), ssn2: randInt(10,99), ssn3: randInt(1000,9999),
       sex: details.sex || ["M","F"][randInt(0,1)],
       newPatientId: newPid,
-      chartNumber: randNumStr()
+      chartNumber: randNumStr(),
+      externalId: details.externalId || null
     };
     patientIdentities[newPid] = identity;
     return identity;
