@@ -7871,12 +7871,24 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     function onKey(e){
       if(!state.confirmMode) return; var tag = document.activeElement && document.activeElement.tagName;
       if(tag==="TEXTAREA" || tag==="INPUT" || tag==="SELECT") return; var k = (e.key||"").toLowerCase();
-      if(k==="y" || k==="enter"){ e.preventDefault(); doConfirm(ep, true, block); } else if(k==="n" || k==="escape"){ e.preventDefault(); doConfirm(ep, false, block); }
+      if(k==="y" || k==="enter"){ e.preventDefault(); unlockEggAudio(); doConfirm(ep, true, block); } else if(k==="n" || k==="escape"){ e.preventDefault(); doConfirm(ep, false, block); }
     }
     state.confirmHandler = onKey; document.addEventListener("keydown", onKey);
     var yb = block.querySelector(".yn-yes"), nb = block.querySelector(".yn-no");
-    if(yb) yb.addEventListener("click", function(){ doConfirm(ep, true, block); });
+    if(yb) yb.addEventListener("click", function(){ unlockEggAudio(); doConfirm(ep, true, block); });
     if(nb) nb.addEventListener("click", function(){ doConfirm(ep, false, block); });
+  }
+
+  // Unlock the easter-egg audio element so it can play later despite autoplay policy.
+  // Called directly from user-gesture handlers (click/keydown) so the browser allows it.
+  var eggAudioUnlocked = false;
+  function unlockEggAudio(){
+    if(eggAudioUnlocked) return;
+    var egg = document.getElementById("picardEgg");
+    if(!egg) return;
+    eggAudioUnlocked = true;
+    egg.muted = true;
+    egg.play().then(function(){ egg.pause(); egg.currentTime = 0; egg.muted = false; }).catch(function(){ egg.muted = false; });
   }
 
   function doConfirm(ep, yes, block){
@@ -8925,16 +8937,6 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     applyTheme(); renderSidebar("");
     setupTooltips(); setupKeyboardNav(); setupScramble(); setupCommandPalette(); setupJsonValidation();
     startGeometry(); startClocks();
-    // Unlock the easter-egg audio on the first user interaction so autoplay
-    // policy allows it to play later when Jean-Luc Picard appears in a response
-    (function(){
-      var egg = document.getElementById("picardEgg");
-      if(!egg) return;
-      var unlocked = false;
-      function unlock(){ if(unlocked) return; unlocked = true; egg.volume = 0; egg.play().then(function(){ egg.pause(); egg.currentTime = 0; egg.volume = 1; }).catch(function(){ egg.volume = 1; }); document.removeEventListener("click", unlock); document.removeEventListener("keydown", unlock); }
-      document.addEventListener("click", unlock);
-      document.addEventListener("keydown", unlock);
-    })();
     var st=null; search.addEventListener("input", function(){ clearTimeout(st); st = setTimeout(function(){ renderSidebar(search.value); }, 120); });
     $("sbToggle").addEventListener("click", function(){ $("sidebar").classList.toggle("open"); $("sbOverlay").classList.toggle("show"); });
     $("sbOverlay").addEventListener("click", function(){ $("sidebar").classList.remove("open"); $("sbOverlay").classList.remove("show"); });
