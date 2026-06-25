@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/augmented-ui@2.0.0/augmented-ui.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/augmented-ui@2.0.0/augmented-ui.min.css">
-<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+<script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
 <style>
 /* ============================================================
    LK//SIM — BRIDGE TERMINAL
@@ -962,6 +962,8 @@ html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-se
 </style>
 </head>
 <body>
+<!-- Easter egg: "Make it so" audio clip, played when Jean-Luc Picard appears in a response -->
+<audio id="picardEgg" src="make-it-so.mp3" preload="auto" style="display:none"></audio>
 <div class="boot-flash"></div>
 <div class="crt-flicker"></div>
 <div class="crt-scanlines"></div>
@@ -7181,10 +7183,10 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     {code:"CHK", text:"Checked In"},
     {code:"ARR", text:"Arrived"},
     {code:"CONF", text:"Confirmed"},
-    {code:"PEN", text:"Pending"},
+    {code:"PEND", text:"Pending"},
     {code:"CANC", text:"Cancelled"},
     {code:"NSHOW", text:"No Show"},
-    {code:"R/S", text:"Rescheduled"}
+    {code:"RESCH", text:"Rescheduled"}
   ];
 
   var APPT_NOTES = [
@@ -7973,6 +7975,16 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         clonedResp.createdPatientId = newIdentity.newPatientId;
       }
       bodyObj = randomizeResponse(clonedResp, reqPid);
+    }
+    // Easter egg: if the response contains "Jean-Luc Picard", play the "Make it so" clip
+    if(!isErr){
+      try {
+        var respStr = JSON.stringify(bodyObj).toLowerCase();
+        if(respStr.indexOf("jean-luc") !== -1 && respStr.indexOf("picard") !== -1){
+          var egg = document.getElementById("picardEgg");
+          if(egg){ egg.currentTime = 0; egg.play().catch(function(){}); }
+        }
+      } catch(e){}
     }
     var html = '<div class="tline" style="margin-top:10px"><span class="t-section">» response</span> <span class="'+statusCls+'">'+esc(status+' '+statusText(status))+'</span> <span class="t-dim">· '+latency+'ms</span></div>';
     html += '<div class="resp-seamless '+blockCls+'">';
