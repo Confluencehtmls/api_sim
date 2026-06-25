@@ -7879,16 +7879,31 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(nb) nb.addEventListener("click", function(){ doConfirm(ep, false, block); });
   }
 
-  // Unlock the easter-egg audio element so it can play later despite autoplay policy.
-  // Called directly from user-gesture handlers (click/keydown) so the browser allows it.
-  var eggAudioUnlocked = false;
+  // Easter egg audio via Web Audio API (more reliable than <audio> element).
+  // AudioContext is created on init (starts suspended), WAV is fetched+decoded immediately.
+  // On user gesture ([y] keydown/click), the context is resumed.
+  // playEggAudio() fires later when Picard appears in the response.
+  var eggCtx = null, eggBuffer = null;
+  function initEggAudio(){
+    try{
+      eggCtx = new (window.AudioContext || window.webkitAudioContext)();
+      fetch("make-it-so.wav").then(function(r){ return r.arrayBuffer(); }).then(function(ab){
+        return eggCtx.decodeAudioData(ab);
+      }).then(function(buf){ eggBuffer = buf; }).catch(function(){});
+    }catch(e){}
+  }
   function unlockEggAudio(){
-    if(eggAudioUnlocked) return;
-    var egg = document.getElementById("picardEgg");
-    if(!egg) return;
-    eggAudioUnlocked = true;
-    egg.muted = true;
-    egg.play().then(function(){ egg.pause(); egg.currentTime = 0; egg.muted = false; }).catch(function(){ egg.muted = false; });
+    if(eggCtx && eggCtx.state === "suspended"){ eggCtx.resume(); }
+  }
+  function playEggAudio(){
+    if(!eggCtx || !eggBuffer) return;
+    if(eggCtx.state === "suspended"){ eggCtx.resume(); }
+    try{
+      var src = eggCtx.createBufferSource();
+      src.buffer = eggBuffer;
+      src.connect(eggCtx.destination);
+      src.start(0);
+    }catch(e){}
   }
 
   function doConfirm(ep, yes, block){
@@ -8005,8 +8020,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       try {
         var respStr = JSON.stringify(bodyObj).toLowerCase();
         if(respStr.indexOf("jean-luc") !== -1 || respStr.indexOf("picard") !== -1){
-          var egg = document.getElementById("picardEgg");
-          if(egg){ egg.currentTime = 0; egg.play().catch(function(){}); }
+          playEggAudio();
         }
       } catch(e){}
     }
@@ -8937,6 +8951,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     applyTheme(); renderSidebar("");
     setupTooltips(); setupKeyboardNav(); setupScramble(); setupCommandPalette(); setupJsonValidation();
     startGeometry(); startClocks();
+    initEggAudio();
     var st=null; search.addEventListener("input", function(){ clearTimeout(st); st = setTimeout(function(){ renderSidebar(search.value); }, 120); });
     $("sbToggle").addEventListener("click", function(){ $("sidebar").classList.toggle("open"); $("sbOverlay").classList.toggle("show"); });
     $("sbOverlay").addEventListener("click", function(){ $("sidebar").classList.remove("open"); $("sbOverlay").classList.remove("show"); });
