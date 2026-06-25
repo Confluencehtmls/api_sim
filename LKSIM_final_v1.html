@@ -7111,6 +7111,21 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     return identity;
   }
 
+  // find an existing identity by any of its identifiers (originalId, newPatientId, chartNumber)
+  // used by SmartSearch so that searching for a known patientId or chartNumber returns that patient
+  function findIdentityByIdentifier(idValue){
+    if(!idValue) return null;
+    var idStr = String(idValue);
+    if(patientIdentities[idStr]) return { originalId: idStr, identity: patientIdentities[idStr] };
+    for(var existingId in patientIdentities){
+      if(patientIdentities[existingId].newPatientId === idStr) return { originalId: existingId, identity: patientIdentities[existingId] };
+    }
+    for(var existingId2 in patientIdentities){
+      if(patientIdentities[existingId2].chartNumber === idStr) return { originalId: existingId2, identity: patientIdentities[existingId2] };
+    }
+    return null;
+  }
+
   function randomizeResponse(obj, originalPatientId){
     if(!obj || typeof obj !== "object") return obj;
     if(Array.isArray(obj)){ return obj.map(function(item){ return randomizeResponse(item, originalPatientId); }); }
@@ -7735,7 +7750,32 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         else if(parsed.value.patient) reqPid = parsed.value.patient;
         else if(parsed.value.request && parsed.value.request.patientId) reqPid = parsed.value.request.patientId;
       }
-      bodyObj = ep.sampleResponse != null ? randomizeResponse(cloneObj(ep.sampleResponse), reqPid) : {};
+      // SmartSearch: if query contains a numeric token matching an existing identity, inject that patient
+      var clonedResp = ep.sampleResponse != null ? cloneObj(ep.sampleResponse) : {};
+      if(ep.id === "lkbridge-smartsearch" && parsed.ok && parsed.value && parsed.value.query && typeof parsed.value.query === "string" && clonedResp.patients){
+        var qParts = parsed.value.query.split("|");
+        var matchedIdentity = null;
+        for(var qi=0; qi<qParts.length; qi++){
+          var qTok = qParts[qi].trim();
+          if(qTok && /^\d{3,}$/.test(qTok)){
+            var matched = findIdentityByIdentifier(qTok);
+            if(matched){ matchedIdentity = matched.identity; break; }
+          }
+        }
+        if(matchedIdentity){
+          clonedResp.patients[0] = {
+            chartNumber: matchedIdentity.chartNumber,
+            dateOfBirth: { raw: matchedIdentity.dob, value: "/Date(" + new Date(matchedIdentity.dob).getTime() + ")/" },
+            firstName: matchedIdentity.firstName.toUpperCase(),
+            id: matchedIdentity.newPatientId,
+            lastName: matchedIdentity.lastName.toUpperCase(),
+            middleName: null, sex: matchedIdentity.sex,
+            socialSecurityNumber: { formatted: matchedIdentity.ssn1+"-"+matchedIdentity.ssn2+"-"+matchedIdentity.ssn3, raw: String(matchedIdentity.ssn1)+String(matchedIdentity.ssn2)+String(matchedIdentity.ssn3) },
+            zipCode: matchedIdentity.zip
+          };
+        }
+      }
+      bodyObj = randomizeResponse(clonedResp, reqPid);
     }
     var html = '<div class="tline" style="margin-top:10px"><span class="t-section">» response</span> <span class="'+statusCls+'">'+esc(status+' '+statusText(status))+'</span> <span class="t-dim">· '+latency+'ms</span></div>';
     html += '<div class="resp-seamless '+blockCls+'">';
@@ -8223,7 +8263,8 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     for(var i=0;i<ENDPOINTS.length;i++){ if(ENDPOINTS[i].id===id){ ep=ENDPOINTS[i]; break; } } if(!ep) return;
     if(state.confirmHandler){ document.removeEventListener("keydown", state.confirmHandler); state.confirmHandler=null; }
     state.confirmMode = false; state.selected = ep; state.simStatus = 200;
-    state.requestText = JSON.stringify(ep.sampleRequest != null ? ep.sampleRequest : {}, null, 2);
+    var sample = generateSample(ep);
+    state.requestText = typeof sample === "string" ? sample : JSON.stringify(sample, null, 2);
     // remove idle prompt + hint if present (only on FIRST selection — check for data-id-less cursor)
     var idleCursor = crtBody.querySelector(".tline > .cursor:not(.confirm-cursor)");
     if(idleCursor && !idleCursor.closest(".session-block")){
@@ -8253,7 +8294,15 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   }
 
   // ===== FONT + THEME =====
-  function applyFontScale(){ var s = state.fontScale; crtBody.style.fontSize = (13.5 * s) + "px"; document.documentElement.style.fontSize = (100 * s) + "px"; }
+  function applyFontScale(){
+    var s = state.fontScale;
+    // apply zoom to workspace and statusbar SEPARATELY (not their parent .shell)
+    // zooming .shell creates a stacking context that breaks the CRT scanlines mix-blend-mode
+    var ws = document.querySelector(".workspace");
+    var sb = document.querySelector(".statusbar");
+    if(ws) ws.style.zoom = s;
+    if(sb) sb.style.zoom = s;
+  }
   function applySbFontScale(){ var s = state.sbFontScale; if(sbList) sbList.style.fontSize = (12 * s) + "px"; var c = document.querySelector(".sb-count"); if(c) c.style.fontSize = (10 * s) + "px"; var si = document.querySelector(".sb-search input"); if(si) si.style.fontSize = (12 * s) + "px"; }
   function applyTheme(){ document.documentElement.setAttribute("data-theme", state.theme); var b = $("themeToggle"); if(b) b.textContent = state.theme==="dark" ? "☀ light" : "☾ dark"; }
 
