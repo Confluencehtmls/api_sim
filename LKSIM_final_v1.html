@@ -7783,10 +7783,22 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         var matchedIdentity = null;
         for(var qi=0; qi<qParts.length; qi++){
           var qTok = qParts[qi].trim();
-          if(qTok && /^\d{3,}$/.test(qTok)){
+          if(!qTok) continue;
+          // numeric token: match by patientId or chartNumber
+          if(/^\d{3,}$/.test(qTok)){
             var matched = findIdentityByIdentifier(qTok);
             if(matched){ matchedIdentity = matched.identity; break; }
           }
+          // name token: match by firstName or lastName (case-insensitive)
+          var qLower = qTok.toLowerCase();
+          for(var existId in patientIdentities){
+            var ident = patientIdentities[existId];
+            if((ident.firstName && ident.firstName.toLowerCase() === qLower) ||
+               (ident.lastName && ident.lastName.toLowerCase() === qLower)){
+              matchedIdentity = ident; break;
+            }
+          }
+          if(matchedIdentity) break;
         }
         if(matchedIdentity){
           clonedResp.patients[0] = {
