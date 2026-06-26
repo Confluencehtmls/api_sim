@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LK//SIM — Bridge Terminal</title>
+<title>LK//SIM - Bridge Terminal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=Share+Tech+Mono&family=VT323&display=swap" rel="stylesheet">
@@ -12,7 +12,7 @@
 <script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
 <style>
 /* ============================================================
-   LK//SIM — BRIDGE TERMINAL
+   LK//SIM - BRIDGE TERMINAL
    90s anime screen-graphics (Neon Genesis Evangelion / GITS:SAC)
    Amber = primary phosphor · Green = nominal · Red = alert · Cyan = data
    ============================================================ */
@@ -28,7 +28,7 @@
   --font-mono:'VT323','Share Tech Mono',monospace;
   --font-mono2:'Share Tech Mono','VT323',monospace;
 
-  /* Surfaces — true black + deep violet-black */
+  /* Surfaces - true black + deep violet-black */
   --bg:#000000; --bg-2:#06030f; --surface:#0a0518; --surface-2:#0e0820; --surface-3:#140a2a;
   --text:#f8ffec; --text-2:#b8c8c0; --text-3:#7a8a80; --text-4:#5a6862;
   --border:#1a2a22; --border-2:#243a30;
@@ -60,7 +60,7 @@
   --jk-key:#ffb000; --jk-str:#00ff66; --jk-num:#00e5ff; --jk-bool:#c084ff; --jk-null:#5d6e64; --jk-punc:#7a8a80;
 
   --topbar-h:46px; --statusbar-h:30px; --sidebar-w:268px;
-  --crt-bg:#000000; /* solid background for crt-body + cmd-line — pure black */
+  --crt-bg:#000000; /* solid background for crt-body + cmd-line - pure black */
 }
 
 html,body{height:100%}
@@ -79,7 +79,7 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 .mono{font-family:var(--font-mono2)}
 
 /* ===== CRT overlays ===== */
-/* scanlines — visible but not darkening text */
+/* scanlines - visible but not darkening text */
 .crt-scanlines{
   position:fixed;inset:0;pointer-events:none;z-index:9000;
   background:repeating-linear-gradient(0deg,
@@ -92,18 +92,18 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 }
 @keyframes scanDrift{0%{background-position:0 0}100%{background-position:0 3px}}
 
-/* vignette — subtle */
+/* vignette - subtle */
 .crt-vignette{
   position:fixed;inset:0;pointer-events:none;z-index:9001;
   background:radial-gradient(ellipse at center,transparent 65%,rgba(0,0,0,.35) 100%);
 }
 @keyframes vignettePulse{0%,100%{opacity:.85}50%{opacity:1}}
 
-/* CRT flicker — subtle */
+/* CRT flicker - subtle */
 .crt-flicker{position:fixed;inset:0;pointer-events:none;z-index:8999;background:rgba(255,176,0,.005);animation:flicker 4s infinite}
 @keyframes flicker{0%,100%{opacity:.1}47%{opacity:.1}48%{opacity:.3}49%{opacity:.1}}
 
-/* CRT rolling bar — slow horizontal sync distortion */
+/* CRT rolling bar - slow horizontal sync distortion */
 .crt-rollbar{
   position:fixed;left:0;right:0;height:80px;pointer-events:none;z-index:9002;
   background:linear-gradient(180deg,transparent,rgba(255,176,0,.04) 50%,transparent);
@@ -111,14 +111,14 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 }
 @keyframes rollBar{0%{top:-80px}100%{top:100vh}}
 
-/* CRT RGB split — chromatic aberration on the whole screen */
+/* CRT RGB split - chromatic aberration on the whole screen */
 .crt-rgb-split{
   position:fixed;inset:0;pointer-events:none;z-index:8998;
   box-shadow:inset 2px 0 0 rgba(255,0,0,.08),inset -2px 0 0 rgba(0,150,255,.08);
   mix-blend-mode:screen;
 }
 
-/* EVA warning system — full HUD overlay during transmit, not just stripes */
+/* EVA warning system - full HUD overlay during transmit, not just stripes */
 .eva-warning{
   position:fixed;left:0;right:0;pointer-events:none;z-index:9003;
   opacity:0;transition:opacity .15s ease;
@@ -150,7 +150,7 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 .eva-warning::before{left:0}
 .eva-warning::after{right:0}
 
-/* EVA alert — real glitch on errors: RGB tear + screen shake + data corruption */
+/* EVA alert - real glitch on errors: RGB tear + screen shake + data corruption */
 .eva-alert{
   position:fixed;inset:0;pointer-events:none;z-index:9004;
   opacity:0;
@@ -182,7 +182,7 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 .crt-noise.burst{animation:noiseBurst .15s steps(2)}
 @keyframes noiseBurst{0%{opacity:0}50%{opacity:.15}100%{opacity:0}}
 
-/* Thermoptic ripple — GITS:SAC active camo */
+/* Thermoptic ripple - GITS:SAC active camo */
 .crt-ripple{
   position:fixed;inset:0;pointer-events:none;z-index:8996;opacity:.03;
   background:repeating-linear-gradient(90deg,
@@ -195,7 +195,7 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 }
 @keyframes rippleShift{0%{transform:translateX(0)}100%{transform:translateX(8px)}}
 
-/* EVA targeting HUD — full animated targeting system */
+/* EVA targeting HUD - full animated targeting system */
 .eva-reticle{
   position:fixed;width:160px;height:160px;pointer-events:none;z-index:9005;
   opacity:0;transition:opacity .15s ease;
@@ -204,12 +204,12 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
 .eva-reticle.show{opacity:.8}
 .eva-reticle canvas{width:160px;height:160px}
 
-/* Data rain — actually visible */
+/* Data rain - actually visible */
 .data-rain{
   position:fixed;inset:0;pointer-events:none;z-index:1;opacity:.4;
 }
 
-/* Glitch text effect — for error states */
+/* Glitch text effect - for error states */
 .glitch-text{
   position:relative;
   animation:glitchShake .3s steps(4);
@@ -218,13 +218,13 @@ input,textarea,select{font-family:inherit;font-size:var(--fs-sm)}
   0%{transform:translate(0)}25%{transform:translate(-2px,1px)}50%{transform:translate(2px,-1px)}75%{transform:translate(-1px,0)}100%{transform:translate(0)}
 }
 
-/* Screen curvature — barrel distortion via SVG filter */
+/* Screen curvature - barrel distortion via SVG filter */
 .crt-curve{
   position:fixed;inset:0;pointer-events:none;z-index:8995;
   opacity:0; /* hidden by default, toggled on for dramatic moments */
 }
 
-/* Chromatic aberration — MAXIMUM (dark mode only) */
+/* Chromatic aberration - MAXIMUM (dark mode only) */
 html[data-theme="dark"] .crt-body .tline{
   text-shadow:
     -1px 0 0 rgba(255,0,0,.18),
@@ -243,7 +243,7 @@ html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-se
   text-shadow: 0 0 6px currentColor, 0 0 12px currentColor;
 }
 
-/* Session block entrance — more dramatic */
+/* Session block entrance - more dramatic */
 .session-block.absorb{
   animation:absorbMax .4s cubic-bezier(.22,.61,.36,1);
 }
@@ -253,7 +253,7 @@ html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-se
   100%{opacity:1;transform:translateX(0) scale(1);filter:blur(0)}
 }
 
-/* Transmit state — whole screen shifts color temperature */
+/* Transmit state - whole screen shifts color temperature */
 body.transmitting{
   animation:tempShift .5s ease-out;
 }
@@ -261,7 +261,7 @@ body.transmitting{
   0%{filter:hue-rotate(0deg)}50%{filter:hue-rotate(-8deg) brightness(1.05)}100%{filter:hue-rotate(0deg)}
 }
 
-/* Response reveal — MAXIMUM */
+/* Response reveal - MAXIMUM */
 .resp-block-reveal{
   animation:respRevealMax .6s cubic-bezier(.22,.61,.36,1);
 }
@@ -272,7 +272,7 @@ body.transmitting{
   100%{opacity:1;transform:translateY(0) scale(1);box-shadow:none}
 }
 
-/* EVA system status overlay — corner data readouts */
+/* EVA system status overlay - corner data readouts */
 .eva-status{
   position:fixed;top:8px;left:8px;z-index:9006;pointer-events:none;
   font-family:var(--font-mono2);font-size:9px;color:rgba(255,176,0,.3);letter-spacing:.1em;
@@ -284,7 +284,7 @@ body.transmitting{
   line-height:1.6;text-align:right;
 }
 
-/* power-on boot flash — CRT power-on sequence */
+/* power-on boot flash - CRT power-on sequence */
 .boot-flash{position:fixed;inset:0;background:#fff;z-index:9999;animation:bootflash 1.2s ease-out forwards;pointer-events:none}
 @keyframes bootflash{
   0%{opacity:0;clip-path:inset(0 0 0 0)}
@@ -295,7 +295,7 @@ body.transmitting{
   100%{opacity:0;clip-path:inset(0 0 0 0);visibility:hidden}
 }
 
-/* ===== Transmit shockwave — ring emanates from command line on Y press ===== */
+/* ===== Transmit shockwave - ring emanates from command line on Y press ===== */
 .shockwave{
   position:fixed;pointer-events:none;z-index:9003;
   border:2px solid var(--amber);border-radius:50%;
@@ -308,7 +308,7 @@ body.transmitting{
   100%{width:1200px;height:1200px;opacity:0;border-width:1px}
 }
 
-/* ===== Response data burst — radial glow from response block ===== */
+/* ===== Response data burst - radial glow from response block ===== */
 .data-burst{
   position:absolute;pointer-events:none;z-index:3;
   border-radius:50%;
@@ -322,7 +322,7 @@ body.transmitting{
   100%{opacity:0;transform:scale(2)}
 }
 
-/* ===== CRT power-down on theme switch — brief screen flicker ===== */
+/* ===== CRT power-down on theme switch - brief screen flicker ===== */
 body.theme-switching{animation:themeSwitch .3s steps(3)}
 @keyframes themeSwitch{
   0%{filter:brightness(1)}33%{filter:brightness(0.3)}66%{filter:brightness(1.5)}100%{filter:brightness(1)}
@@ -474,7 +474,7 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
 .crt-path .prompt{color:var(--green)}
 .crt-tag{font-family:var(--font-mono2);font-size:9px;color:var(--text-4);letter-spacing:.1em;border:1px solid var(--border);padding:1px 5px}
 
-/* console body — the terminal */
+/* console body - the terminal */
 .crt-body{
   flex:1;min-height:0;overflow-y:auto;padding:16px 18px 24px;
   font-family:var(--font-mono2);font-size:13.5px;line-height:1.7;color:var(--text);
@@ -510,9 +510,9 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
 .t-muted{color:var(--text-4)}
 .t-ruler{color:var(--text-4);letter-spacing:-.02em}
 
-/* blinking cursor — always amber/orange rectangle */
+/* blinking cursor - always amber/orange rectangle */
 .cursor{display:inline-block;width:9px;height:15px;background:var(--amber);vertical-align:-2px;box-shadow:0 0 6px var(--amber);animation:blink 1.05s steps(1) infinite;margin-left:1px}
-.cursor.solid{animation:none;opacity:1} /* stopped blinking — processing state */
+.cursor.solid{animation:none;opacity:1} /* stopped blinking - processing state */
 @keyframes blink{0%,50%{opacity:1}50.01%,100%{opacity:0}}
 
 /* idle hint block */
@@ -524,7 +524,7 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
 .cli-label{font-family:var(--font-mono2);font-size:12px;color:var(--cyan);letter-spacing:.04em;margin-top:10px;display:block}
 .cli-label .hint{color:var(--text-4);font-size:10px;letter-spacing:.06em}
 
-/* seamless request editor — overlay technique: transparent textarea on top of a highlighted <pre> */
+/* seamless request editor - overlay technique: transparent textarea on top of a highlighted <pre> */
 /* the <pre> shows syntax-highlighted JSON; the textarea shows only the caret. identical metrics = perfect alignment */
 .req-wrap{
   position:relative;margin-top:2px;padding-left:16px;border-left:1px solid var(--border);
@@ -546,14 +546,14 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
   white-space:pre-wrap;word-break:break-word;word-wrap:break-word;
 }
 
-/* inline mini buttons — terminal style, no heavy borders */
+/* inline mini buttons - terminal style, no heavy borders */
 .mini-btn{
   font-family:var(--font-mono2);font-size:10px;letter-spacing:.06em;color:var(--text-3);
   border:none;padding:0 4px;text-transform:lowercase;cursor:pointer;background:none;
 }
 .mini-btn:hover{color:var(--amber);text-decoration:underline}
 
-/* inline example/action chips — terminal links, not boxed */
+/* inline example/action chips - terminal links, not boxed */
 .cli-chips{margin-top:8px;padding-left:16px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .chip{
   font-family:var(--font-mono2);font-size:11px;color:var(--cyan);
@@ -564,7 +564,7 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
 .chip.amber{color:var(--amber);text-decoration-color:rgba(255,176,0,.3)}
 .chip.amber:hover{text-shadow:0 0 6px rgba(255,176,0,.4)}
 
-/* Y/N confirm — inline terminal text */
+/* Y/N confirm - inline terminal text */
 .yn-chip{
   font-family:var(--font-mono2);font-size:14px;font-weight:700;letter-spacing:.04em;
   padding:0 4px;border:none;cursor:pointer;background:none;line-height:1.4;
@@ -576,7 +576,7 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
 .yn-no:hover{color:var(--red);text-shadow:0 0 8px rgba(255,45,74,.5)}
 .yn-chip:disabled{opacity:.4;cursor:default;text-decoration:none}
 
-/* response — seamless terminal text, no box */
+/* response - seamless terminal text, no box */
 .resp-seamless{margin-top:8px;padding-left:16px;border-left:1px solid var(--border-2);font-family:var(--font-mono2);font-size:12.5px;line-height:1.7;overflow-x:auto;max-height:50vh;overflow-y:auto;white-space:pre}
 .resp-seamless.ok{border-left-color:rgba(0,255,102,.3)}
 .resp-seamless.err{border-left-color:rgba(255,45,74,.4)}
@@ -603,12 +603,12 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
 .jk-collapse-summary:hover{color:var(--amber)}
 .jk-collapsed-content{display:none}
 
-/* transmit progress — inline ASCII bar */
+/* transmit progress - inline ASCII bar */
 .tx-line{color:var(--amber);text-shadow:0 0 6px rgba(255,176,0,.4)}
 .tx-bar-char{color:var(--amber);text-shadow:0 0 4px rgba(255,176,0,.5)}
 .tx-track-char{color:var(--text-4)}
 
-/* "absorb" transition — content slides/fades in smoothly when a URI is pulled in from the nav */
+/* "absorb" transition - content slides/fades in smoothly when a URI is pulled in from the nav */
 .absorb{animation:absorb .32s cubic-bezier(.22,.61,.36,1)}
 @keyframes absorb{
   0%{opacity:0;transform:translateX(-10px);filter:blur(1px)}
@@ -616,7 +616,7 @@ body.theme-switching{animation:themeSwitch .3s steps(3)}
   100%{opacity:1;transform:translateX(0);filter:blur(0)}
 }
 
-/* status code picker — inline terminal chips */
+/* status code picker - inline terminal chips */
 .status-pick{margin-top:10px;padding-left:0}
 .status-pick .sp-label{font-family:var(--font-mono2);font-size:11px;color:var(--text-3);letter-spacing:.04em;margin-right:6px}
 .s-chip{
@@ -713,6 +713,151 @@ html[data-theme="light"] .req-editor{caret-color:var(--amber)}
 html[data-theme="light"] .crt-scanlines{opacity:.25}
 html[data-theme="light"] .crt-vignette{background:radial-gradient(ellipse at center,transparent 65%,rgba(58,50,42,.12) 100%)}
 html[data-theme="light"] .boot-flash{background:#fff}
+
+/* ===== clean theme (minimal / corporate / no CRT effects) ===== */
+html[data-theme="clean"]{
+  --bg:#f0f2f5; --bg-2:#e9ecef; --surface:#ffffff; --surface-2:#f8f9fa; --surface-3:#e9ecef;
+  --text:#1a1a2e; --text-2:#495057; --text-3:#6c757d; --text-4:#adb5bd;
+  --border:#d1d5db; --border-2:#ced4da;
+  --grid:rgba(0,0,0,0); --grid-dot:rgba(0,0,0,0);
+  --sidebar-bg:#f8f9fa; --sidebar-surface:#ffffff;
+  --sidebar-text:#495057; --sidebar-text-2:#6c757d; --sidebar-border:#e9ecef;
+  --amber:#4f46e5; --amber-dim:#4338ca; --amber-soft:rgba(79,70,229,.08); --amber-border:rgba(79,70,229,.3);
+  --green:#059669; --green-dim:#047857; --green-soft:rgba(5,150,105,.08); --green-border:rgba(5,150,105,.3);
+  --green-prompt:#4f46e5;
+  --red:#dc2626; --red-dim:#b91c1c; --red-soft:rgba(220,38,38,.08); --red-border:rgba(220,38,38,.3);
+  --cyan:#0891b2; --cyan-soft:rgba(8,145,178,.08); --cyan-border:rgba(8,145,178,.3);
+  --violet:#7c3aed;
+  --m-get:#059669; --m-get-bg:rgba(5,150,105,.10);
+  --m-post:#4f46e5; --m-post-bg:rgba(79,70,229,.10);
+  --m-put:#7c3aed; --m-put-bg:rgba(124,58,237,.10);
+  --m-del:#dc2626; --m-del-bg:rgba(220,38,38,.10);
+  --jk-key:#3730a3; --jk-str:#b45309; --jk-num:#7c3aed; --jk-bool:#dc2626; --jk-null:#adb5bd; --jk-punc:#6c757d;
+  --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+  --font-mono:'SF Mono','Cascadia Code',Consolas,'Liberation Mono',Menlo,monospace;
+  --font-mono2:'SF Mono','Cascadia Code',Consolas,'Liberation Mono',Menlo,monospace;
+}
+html[data-theme="clean"] body{ background-image:none; background-color:#f0f2f5; }
+html[data-theme="clean"] .sidebar{ background:#f8f9fa; border-right:1px solid #e9ecef; }
+html[data-theme="clean"] .crt-screen{
+  background:#fafbfc; box-shadow:0 1px 3px rgba(0,0,0,.08); border:1px solid #d1d5db; border-radius:6px;
+}
+html[data-theme="clean"] .crt-screen::before{ display:none; }
+html[data-theme="clean"] .crt-screen::after{ display:none; }
+html[data-theme="clean"]{--crt-bg:#ffffff}
+html[data-theme="clean"] .statusbar{
+  background:#f8f9fa; border-top:1px solid #dee2e6;
+}
+html[data-theme="clean"] .statusbar::before{ display:none; }
+html[data-theme="clean"] .crt-head{ background:#f8f9fa; border-bottom:1px solid #e9ecef; }
+html[data-theme="clean"] .req-editor{ caret-color:#0d6efd; }
+html[data-theme="clean"] .crt-scanlines{ display:none; }
+html[data-theme="clean"] .crt-vignette{ display:none; }
+html[data-theme="clean"] .crt-flicker{ display:none; }
+html[data-theme="clean"] .crt-rollbar{ display:none; }
+html[data-theme="clean"] .crt-rgb-split{ display:none; }
+html[data-theme="clean"] .crt-noise{ display:none; }
+html[data-theme="clean"] .boot-flash{ display:none; }
+html[data-theme="clean"] .crt-screen .br{ display:none; }
+html[data-theme="clean"] .crt-screen{ box-shadow:0 1px 3px rgba(0,0,0,.08); }
+html[data-theme="clean"] .sidebar{ border-radius:0; }
+html[data-theme="clean"] .sb-group-head{ font-family:var(--font-sans); letter-spacing:.02em; text-transform:none; font-weight:600; }
+html[data-theme="clean"] .sb-item{ font-family:var(--font-sans); }
+html[data-theme="clean"] .sb-item .nm{ font-size:13px; }
+html[data-theme="clean"] .t-prompt{ font-family:var(--font-mono); color:var(--text-3); text-shadow:none; }
+html[data-theme="clean"] .t-method{ text-shadow:none; font-family:var(--font-sans); font-weight:600; font-size:11px; }
+html[data-theme="clean"] .t-url{ text-shadow:none; }
+html[data-theme="clean"] .resp-seamless{ border:1px solid #e9ecef; border-radius:4px; }
+html[data-theme="clean"] .session-block .tline{ text-shadow:none; }
+html[data-theme="clean"] .crt-body{ font-family:var(--font-mono); }
+html[data-theme="clean"] .json-validity{ font-family:var(--font-sans); }
+html[data-theme="clean"] .chip, html[data-theme="clean"] .s-chip, html[data-theme="clean"] .yn-chip{
+  font-family:var(--font-sans); border-radius:4px;
+}
+html[data-theme="clean"] .sb-btn{ font-family:var(--font-sans); border-radius:4px; }
+html[data-theme="clean"] .mini-btn{ font-family:var(--font-sans); border-radius:4px; }
+html[data-theme="clean"] .sb-mini-btn{ border-radius:4px; }
+html[data-theme="clean"] .geo-wrap{ display:none; }
+html[data-theme="clean"] .yn-yes, html[data-theme="clean"] .yn-no{ text-shadow:none; }
+html[data-theme="clean"] .yn-yes:hover{ text-shadow:none; background:var(--green-soft); }
+html[data-theme="clean"] .yn-no:hover{ text-shadow:none; background:var(--red-soft); }
+html[data-theme="clean"] .t-ok, html[data-theme="clean"] .t-err, html[data-theme="clean"] .t-warn{ text-shadow:none; }
+html[data-theme="clean"] .t-status-2, html[data-theme="clean"] .t-status-4, html[data-theme="clean"] .t-status-5{ text-shadow:none; }
+html[data-theme="clean"] .s-chip.sel-2{ text-shadow:none; }
+html[data-theme="clean"] .sb-group-head:hover{ color:var(--text); }
+html[data-theme="clean"] .sb-item:hover{ background:rgba(79,70,229,.04); }
+html[data-theme="clean"] .chip{ text-shadow:none; }
+html[data-theme="clean"] .crt-body .t-method{ text-shadow:none; }
+html[data-theme="clean"] .crt-body .t-url{ text-shadow:none; }
+html[data-theme="clean"] .crt-body .t-prompt{ text-shadow:none; }
+
+/* theme button active states */
+.sb-btn.theme{ opacity:.5; padding:2px 6px; min-width:auto; }
+.sb-btn.theme.active{ opacity:1; background:var(--amber-soft); color:var(--amber); }
+
+/* ===== Training Mode (clean theme only) ===== */
+/* Inline training annotations - woven into the session block, not a separate panel */
+.training-hint{
+  display:none; font-family:var(--font-sans); font-size:11px; line-height:1.5;
+  color:#6c757d; padding:2px 0 2px 12px; margin:0 0 2px;
+  border-left:2px solid #c7c9d1;
+}
+html[data-theme="clean"] .training-hint{ display:block; }
+.training-hint strong{ color:#4f46e5; }
+.training-hint.th-gotcha{ border-left-color:#f59e0b; color:#92400e; }
+.training-hint.th-gotcha strong{ color:#b45309; }
+.training-hint.th-tip{ border-left-color:#10b981; color:#065f46; }
+.training-hint.th-tip strong{ color:#047857; }
+.training-hint.th-note{ border-left-color:#3b82f6; color:#1e40af; }
+.training-hint.th-note strong{ color:#1e3a8a; }
+
+/* "More tips" expandable link (clean theme only) */
+.training-more{
+  display:none; font-family:var(--font-sans); font-size:10px; color:#4f46e5;
+  cursor:pointer; padding:2px 0 4px; user-select:none;
+}
+html[data-theme="clean"] .training-more{ display:inline-block; }
+.training-more:hover{ text-decoration:underline; }
+.training-extra{
+  display:none; font-family:var(--font-sans); font-size:10px; line-height:1.5;
+  padding:6px 10px; margin-bottom:4px; background:#fafbfc; border:1px solid #e9ecef; border-radius:3px;
+}
+.training-extra.show{ display:block; }
+.training-extra .te-item{ margin-bottom:3px; padding-left:8px; border-left:2px solid #d1d5db; }
+.training-extra .te-item:last-child{ margin-bottom:0; }
+.training-extra .te-gotcha{ border-left-color:#f59e0b; color:#92400e; }
+.training-extra .te-tip{ border-left-color:#10b981; color:#065f46; }
+.training-extra .te-note{ border-left-color:#3b82f6; color:#1e40af; }
+
+/* Tutorial overlay */
+.tutorial-overlay{ display:none; position:fixed; inset:0; z-index:9998; pointer-events:none; }
+.tutorial-overlay.active{ display:block; }
+.tutorial-overlay .tu-mask{ position:absolute; inset:0; background:rgba(0,0,0,.45); pointer-events:auto; }
+.tutorial-overlay .tu-spotlight{ position:absolute; border:3px solid #4f46e5; border-radius:6px; box-shadow:0 0 0 9999px rgba(0,0,0,.45); transition:all .3s ease; pointer-events:none; }
+.tutorial-overlay .tu-card{
+  position:absolute; bottom:40px; left:50%; transform:translateX(-50%);
+  width:480px; max-width:90vw; background:#fff; border:1px solid #d1d5db; border-radius:8px;
+  box-shadow:0 8px 32px rgba(0,0,0,.2); padding:20px 24px; pointer-events:auto; z-index:9999;
+  font-family:var(--font-sans);
+}
+.tutorial-overlay .tu-step{ font-size:10px; font-weight:700; color:#4f46e5; text-transform:uppercase; letter-spacing:.08em; margin-bottom:6px; }
+.tutorial-overlay .tu-title{ font-size:16px; font-weight:700; color:#1a1a2e; margin-bottom:8px; }
+.tutorial-overlay .tu-body{ font-size:13px; line-height:1.6; color:#495057; margin-bottom:16px; }
+.tutorial-overlay .tu-body strong{ color:#3730a3; }
+.tutorial-overlay .tu-actions{ display:flex; justify-content:space-between; align-items:center; }
+.tutorial-overlay .tu-progress{ font-size:11px; color:#6c757d; }
+.tutorial-overlay .tu-btns{ display:flex; gap:8px; }
+.tutorial-overlay .tu-btn{
+  font-family:var(--font-sans); font-size:12px; font-weight:600; padding:6px 16px; border-radius:4px; border:none; cursor:pointer;
+}
+.tutorial-overlay .tu-btn.skip{ background:transparent; color:#6c757d; }
+.tutorial-overlay .tu-btn.skip:hover{ background:#f1f3f5; }
+.tutorial-overlay .tu-btn.next{ background:#4f46e5; color:#fff; }
+.tutorial-overlay .tu-btn.next:hover{ background:#4338ca; }
+.tutorial-overlay .tu-btn.back{ background:#e9ecef; color:#495057; }
+.tutorial-overlay .tu-btn.back:hover{ background:#dee2e6; }
+.tutorial-overlay .tu-btn.done{ background:#059669; color:#fff; }
+.tutorial-overlay .tu-btn.done:hover{ background:#047857; }
 
 /* ===== A4: Corner reticles (targeting brackets) on CRT screen ===== */
 .crt-screen .br{
@@ -840,8 +985,8 @@ html[data-theme="light"] .boot-flash{background:#fff}
 }
 .chain-chip:hover{background:rgba(192,132,255,.18);box-shadow:0 0 8px rgba(192,132,255,.4);border-color:var(--violet)}
 
-/* ===== A: CRT post-processing — chromatic aberration + bloom (dark mode only) ===== */
-/* chromatic aberration: RGB channel split on terminal text — only in dark mode */
+/* ===== A: CRT post-processing - chromatic aberration + bloom (dark mode only) ===== */
+/* chromatic aberration: RGB channel split on terminal text - only in dark mode */
 html[data-theme="dark"] .crt-body .tline{
   text-shadow:
     -1px 0 0 rgba(255,0,0,.15),
@@ -854,19 +999,19 @@ html[data-theme="dark"] .crt-body .t-method, html[data-theme="dark"] .crt-body .
     1px 0 0 rgba(0,229,255,.2),
     0 0 4px currentColor;
 }
-/* bloom on response JSON — dark mode only */
+/* bloom on response JSON - dark mode only */
 html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-seamless .jk-str{
   text-shadow: 0 0 4px currentColor;
 }
 
-/* ===== C: dithering overlay (removed — caused rainbow in light mode) ===== */
+/* ===== C: dithering overlay (removed - caused rainbow in light mode) ===== */
 
-/* ===== V2 SCRAMBLE (codrops v2 — slow scramble + bg bar + animateBack) ===== */
+/* ===== V2 SCRAMBLE (codrops v2 - slow scramble + bg bar + animateBack) ===== */
 .sb-item .nm{position:relative;display:inline-block;overflow:hidden}
 .scramble-char{position:relative;display:inline-block;z-index:1}
 .scramble-char.scrambling{color:var(--amber)}
 
-/* background bar — sweeps across on enter (scaleX 0→1), back on leave (scaleX→0) */
+/* background bar - sweeps across on enter (scaleX 0→1), back on leave (scaleX→0) */
 .scramble-bar{
   position:absolute;left:0;top:-2px;width:100%;height:calc(100% + 4px);
   background:rgba(255,176,0,.12);
@@ -1010,13 +1155,13 @@ html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-se
   <footer class="statusbar">
     <div class="sb-cell"><span class="k">SYS</span><span class="v green" id="stSys">NOMINAL</span></div>
     <span class="sb-sep">│</span>
-    <div class="sb-cell"><span class="k">EP</span><span class="v amber" id="stEp">—</span></div>
+    <div class="sb-cell"><span class="k">EP</span><span class="v amber" id="stEp">-</span></div>
     <span class="sb-sep">│</span>
-    <div class="sb-cell"><span class="k">METHOD</span><span class="v" id="stMethod">—</span></div>
+    <div class="sb-cell"><span class="k">METHOD</span><span class="v" id="stMethod">-</span></div>
     <span class="sb-sep">│</span>
     <div class="sb-cell"><span class="k">STATE</span><span class="v" id="stState">IDLE</span></div>
     <span class="sb-sep">│</span>
-    <div class="sb-cell"><span class="k">LAT</span><span class="v" id="stLat">—</span></div>
+    <div class="sb-cell"><span class="k">LAT</span><span class="v" id="stLat">-</span></div>
     <span class="sb-sep sb-spacer">│</span>
     <div class="sb-cell"><span class="k">CT</span><span class="v amber" id="stCT">--:--</span></div>
     <span class="sb-sep">│</span>
@@ -1028,11 +1173,33 @@ html[data-theme="dark"] .resp-seamless .jk-key, html[data-theme="dark"] .resp-se
       <button class="sb-btn" id="fontMinus" aria-label="decrease text size">−</button>
       <button class="sb-btn" id="fontPlus" aria-label="increase text size">+</button>
       <span class="sb-sep">│</span>
-      <button class="sb-btn theme" id="themeToggle" aria-label="toggle theme">☀ light</button>
+      <button class="sb-btn theme" id="themeDark" aria-label="dark theme" title="Dark">☾</button>
+      <button class="sb-btn theme" id="themeLight" aria-label="light theme" title="Light">☀</button>
+      <button class="sb-btn theme" id="themeClean" aria-label="clean theme" title="Clean">▢</button>
+      <button class="sb-btn" id="tutorialBtn" style="display:none" title="Start Tutorial">? tutorial</button>
     </div>
   </footer>
 </div>
 <div class="tt" id="tooltip"></div>
+
+<!-- ===== Tutorial overlay (clean theme only) ===== -->
+<div class="tutorial-overlay" id="tutorialOverlay">
+  <div class="tu-mask"></div>
+  <div class="tu-spotlight" id="tuSpotlight"></div>
+  <div class="tu-card" id="tuCard">
+    <div class="tu-step" id="tuStep">Step 1 of 7</div>
+    <div class="tu-title" id="tuTitle"></div>
+    <div class="tu-body" id="tuBody"></div>
+    <div class="tu-actions">
+      <div class="tu-progress" id="tuProgress"></div>
+      <div class="tu-btns">
+        <button class="tu-btn skip" id="tuSkip">Skip</button>
+        <button class="tu-btn back" id="tuBack" style="display:none">Back</button>
+        <button class="tu-btn next" id="tuNext">Next</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ===== Command Palette (Ctrl+K) ===== -->
 <div class="cmd-palette-overlay" id="cmdPaletteOverlay">
@@ -2199,7 +2366,7 @@ var LK_ENDPOINTS = [
   method: "POST",
   url: "https://services.lkstaging.com/UpdatePatient/UpdatePatientService.svc/UpdatePatient",
   summary: "UpdatePatient variant: updates the patient secondary insurance (and primary insurance responsibleParty relationship).",
-  description: "Variant of UpdatePatient that focuses on insurance updates — primarily UpdateSecondaryInsurance with code, policyNumber, groupNumber and responsibleParty, while also nulling/clearing UpdatePrimaryInsurance responsibleParty fields.",
+  description: "Variant of UpdatePatient that focuses on insurance updates - primarily UpdateSecondaryInsurance with code, policyNumber, groupNumber and responsibleParty, while also nulling/clearing UpdatePrimaryInsurance responsibleParty fields.",
   requestSchema: [
     {name:"authentication.subscriberKey", type:"string", required:true, note:"Subscriber key"},
     {name:"authentication.siteServiceKey", type:"string", required:true, note:"Site service key"},
@@ -3121,8 +3288,8 @@ var LK_ENDPOINTS = [
     {name:"authentication.subscriberKey", type:"string", required:true, note:"Subscriber key"},
     {name:"authentication.siteServiceKey", type:"string", required:true, note:"Site service key"},
     {name:"request.patientId", type:"string", required:true, note:"Patient Id"},
-    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date — range start (inclusive)"},
-    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date — range end (inclusive)"}
+    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date - range start (inclusive)"},
+    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date - range end (inclusive)"}
   ],
   sampleRequest: {
     "authentication": {
@@ -3230,8 +3397,8 @@ var LK_ENDPOINTS = [
     {name:"authentication.subscriberKey", type:"string", required:true, note:"Subscriber key"},
     {name:"authentication.siteServiceKey", type:"string", required:true, note:"Site service key"},
     {name:"request.patientId", type:"string", required:true, note:"Patient Id"},
-    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date — range start (inclusive)"},
-    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date — range end (inclusive)"}
+    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date - range start (inclusive)"},
+    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date - range end (inclusive)"}
   ],
   sampleRequest: {
     "authentication": {
@@ -3344,8 +3511,8 @@ var LK_ENDPOINTS = [
     {name:"authentication.subscriberKey", type:"string", required:true, note:"Subscriber key"},
     {name:"authentication.siteServiceKey", type:"string", required:true, note:"Site service key"},
     {name:"request.patientId", type:"string", required:true, note:"Patient Id"},
-    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date — range start (inclusive)"},
-    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date — range end (inclusive)"}
+    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date - range start (inclusive)"},
+    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date - range end (inclusive)"}
   ],
   sampleRequest: {
     "authentication": {
@@ -3469,8 +3636,8 @@ var LK_ENDPOINTS = [
     {name:"authentication.subscriberKey", type:"string", required:true, note:"Subscriber key"},
     {name:"authentication.siteServiceKey", type:"string", required:true, note:"Site service key"},
     {name:"request.patientId", type:"string", required:true, note:"Patient Id"},
-    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date — range start (inclusive)"},
-    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date — range end (inclusive)"}
+    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date - range start (inclusive)"},
+    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date - range end (inclusive)"}
   ],
   sampleRequest: {
     "authentication": {
@@ -3683,8 +3850,8 @@ var LK_ENDPOINTS = [
     {name:"authentication.subscriberKey", type:"string", required:true, note:"Subscriber key"},
     {name:"authentication.siteServiceKey", type:"string", required:true, note:"Site service key"},
     {name:"request.patientId", type:"string", required:true, note:"Patient Id"},
-    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date — range start (inclusive)"},
-    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date — range end (inclusive)"}
+    {name:"request.dateRange.start", type:"string", required:true, note:"ISO date - range start (inclusive)"},
+    {name:"request.dateRange.end", type:"string", required:true, note:"ISO date - range end (inclusive)"}
   ],
   sampleRequest: {
     "authentication": {
@@ -4204,7 +4371,7 @@ var LK_ENDPOINTS = [
   method: "POST",
   url: "https://services.lkstaging.com/LKPatientBalance/VoidPayment",
   summary: "Records a payment that has been voided.",
-  description: "Records a payment that has been voided. No response data — 200 OK indicates the payment was voided.",
+  description: "Records a payment that has been voided. No response data - 200 OK indicates the payment was voided.",
   requestSchema: [
     {name:"authentication.subscriberKey", type:"string", required:true, note:"Subscriber key"},
     {name:"authentication.siteServiceKey", type:"string", required:true, note:"Site service key"},
@@ -6341,7 +6508,7 @@ var LK_ENDPOINTS = [
   method: "POST",
   url: "https://fhir.lkcloud.com/R4/Patient",
   summary: "Create a new Patient resource.",
-  description: "Creates a new Patient resource. NOTE: the Postman collection has this endpoint mislabeled with the FamilyMemberHistory URL — corrected here to the proper Patient endpoint.",
+  description: "Creates a new Patient resource. NOTE: the Postman collection has this endpoint mislabeled with the FamilyMemberHistory URL - corrected here to the proper Patient endpoint.",
   requestSchema: [
     {name:"resourceType", type:"string", required:true, note:"Must be 'Patient'"},
     {name:"name", type:"array", required:true, note:"Patient name array ({use, family, given})"},
@@ -6902,7 +7069,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         var blockId = "jk" + t;
         blockStack.push({id: blockId, type: tok.val, count: 0, closeChar: isObj ? "}" : "]"});
 
-        // opening brace — clickable toggle
+        // opening brace - clickable toggle
         html += '<span class="jk-collapse-toggle" data-jk-block="'+blockId+'">'+tok.val+'</span>';
         // start hidden content container
         html += '<span class="jk-block-content" id="'+blockId+'">';
@@ -6912,7 +7079,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
           var block = blockStack.pop();
           // close the content container
           html += '</span>';
-          // closing brace — also clickable
+          // closing brace - also clickable
           html += '<span class="jk-collapse-toggle" data-jk-block="'+block.id+'">'+tok.val+'</span>';
         } else {
           html += '<span class="jk-punc">'+tok.val+'</span>';
@@ -6987,7 +7154,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     return {valid:true};
   }
 
-  // ===== RESPONSE RANDOMIZER — fictional data injection =====
+  // ===== RESPONSE RANDOMIZER - fictional data injection =====
   var FICTIONAL_NAMES = [
     // Marvel Comics
     ["Barry","Allen"],["Peter","Parker"],["Bruce","Wayne"],["Clark","Kent"],
@@ -7418,7 +7585,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   function errorBody(ep, code, reason, detail){
     var codes = {
       400:{err:"BAD_REQUEST", msg:reason||"The request was malformed or failed validation."},
-      401:{err:"UNAUTHORIZED", msg:reason||"Authentication failed — invalid or missing subscriber/site service key."},
+      401:{err:"UNAUTHORIZED", msg:reason||"Authentication failed - invalid or missing subscriber/site service key."},
       403:{err:"FORBIDDEN", msg:reason||"The authenticated subscriber does not have access to this resource or patient."},
       404:{err:"NOT_FOUND", msg:reason||"The requested resource was not found for the given identifier."},
       409:{err:"CONFLICT", msg:reason||"The request conflicts with the current state of the resource."},
@@ -7444,11 +7611,186 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
 
   // ===== D2: FIELD DICTIONARY =====
   var FIELD_DICT = {
-    "subscriberKey":"ELLKAY subscriber authentication key. GUID format (e.g. 8afc9e40-ba9b-45f5-8970-40e3e9dde5d6). Required for all LKCloud endpoints.","siteServiceKey":"Site-specific service authentication key. GUID format. Identifies the practice/site connecting to the bridge. Required.","authentication":"Authentication object. Contains subscriberKey and siteServiceKey. Required for all LKCloud (non-FHIR) endpoints.","patientId":"Unique patient identifier in the source EHR. Typically a numeric string (e.g. '9324'). Discovered via SmartSearch. Required for patient-specific calls.","chartNumber":"Patient chart number — internal EHR identifier. May differ from patientId. String value.","firstName":"Patient first name. String.","lastName":"Patient last name. String.","middleName":"Patient middle name. String, may be empty.","prefix":"Name prefix (Mr., Ms., Dr., etc.). String, may be null.","suffix":"Name suffix (Jr., Sr., III, etc.). String, may be null.","preferredName":"Patient preferred name. String, may be null.","dateOfBirth":"Date of birth. Object with 'value' (/Date(epoch)/ format) and 'raw' (MM/DD/YYYY string).","sex":"Biological sex. Single character: M, F, or U (unknown).","socialSecurityNumber":"SSN. Object with 'formatted' (XXX-XX-XXXX) and 'raw' (XXXXXXXXX) fields.","race":"Race code. CDC RECIST code (e.g. '2106-3' = White).","races":"Array of race objects, each with code, source, sourceText.","ethnicity":"Ethnicity code. 'N' = Not Hispanic/Latino, 'H' = Hispanic/Latino.","ethnicities":"Array of ethnicity objects with code, source, sourceText.","language":"Preferred language. String (e.g. 'English').","maritalStatus":"Marital status code. Single character (M, S, D, W, etc.).","maritalStatusCode":"Marital status code object with code, source, sourceText.","homePhone":"Home phone number. String, may include formatting.","workPhone":"Work phone number. String.","workPhoneExt":"Work phone extension. String.","mobilePhone":"Mobile phone number. String.","email":"Email address. String.","address1":"Primary address line. String.","address2":"Secondary address line (apartment, suite, etc.). String, may be null.","city":"City. String.","state":"State abbreviation. 2-character string (e.g. 'MD').","zip":"ZIP/Postal code. String.","countryCode":"Country code. String, may be null.","deceased":"Deceased flag. Boolean or null.","deceasedDate":"Date of death. String or null.","created":"Record creation timestamp. ISO 8601 format (e.g. '2018-05-16T11:03:27').","id":"Resource identifier. Numeric string. In FHIR, the resource's logical ID.","alternatePatientId":"Alternate patient identifier. May match patientId or be a secondary ID.","patientStatus":"Patient status code. Integer (0 = active, etc.).","patientFound":"Boolean. True if a patient was found for the given patientId.","npi":"National Provider Identifier. 10-digit number. Used for providers.","upin":"Unique Physician Identification Number. String.","license":"Provider license number. String.","appointmentId":"Unique appointment identifier. Numeric string. Used with GetAppointment, EditAppointment.","start":"Start date/time. ISO 8601 with timezone (e.g. '2020-08-24T07:45:00-04:00').","duration":"Duration. HH:MM:SS format (e.g. '00:15:00').","facilityId":"Facility identifier. Numeric string or null.","facilityName":"Facility name. String or null.","notes":"Appointment or encounter notes. String.","modified":"Last modified timestamp. ISO 8601.","billable":"Billable type indicator. String.","department":"Department identifier. String.","rawStatus":"Raw status from source EHR system. String.","appointmentTypeId":"Appointment type identifier. Numeric string.","available":"Boolean. True if the bridge/service is available.","errorCode":"Error code if the request failed. String or null.","capabilities":"Bridge capability flags. Object with boolean fields (e.g. smartSearch: true).","moduleVersion":"Bridge module version. Numeric string.","deploymentDate":"Bridge deployment date. ISO 8601.","publishedDate":"Bridge published date. ISO 8601.","resourceType":"FHIR resource type. String (e.g. 'Patient', 'Observation', 'Bundle').","status":"Resource status. String (active, succeeded, completed, etc.).","code":"Coded value. May be a CDC RECIST race code, ICD code, SNOMED code, etc. See source system for code set.","source":"Source system code. String identifying the originating EHR system.","sourceText":"Human-readable source text. String.","category":"FHIR resource category. String (e.g. 'vital-signs', 'problem-list-item').","subject":"FHIR subject reference. String (e.g. 'Patient/10132').","meta":"FHIR metadata. Object with lastUpdated, versionId, etc.","entry":"FHIR Bundle entries. Array of resource objects.","total":"Total number of results in a FHIR Bundle. Integer.","type":"FHIR Bundle type. String (searchset, batch, transaction, etc.).","request":"Request wrapper object for nested LKCloud calls. Contains endpoint-specific parameters.","items":"Collection of returned items. Array.","phone":"Phone number. String.","guarantor":"Guarantor information. Object with relationToPatient, address, name, etc.","employer":"Employer information. Object with name, id, address, phone, statusText.","provider":"Primary provider. Object with id, firstName, lastName, npi, upin, license.","referringProvider":"Referring provider. Same structure as provider.","pharmacy":"Pharmacy information. Object with id.","financialResponsibleParty":"Financial responsible party. Object with name, address, DOB, relation, sex.","genderIdentities":"Array of gender identity objects with code, source, sourceText.","sexualOrientation":"Sexual orientation. String or object.","patient":"FHIR patient reference. String (e.g. '9830') or 'Patient/10132'.","account":"Account identifier. Numeric string.","context":"Encounter/context identifier. Numeric string.","staff":"Staff/practitioner identifier. Numeric string.","encounter":"Encounter identifier. Numeric string.","value":"Value field. May contain /Date(epoch)/ for dates, or a plain string.","raw":"Raw value. String representation before formatting.","formatted":"Formatted value. String (e.g. '123-65-9168' for SSN).","relationToPatient":"Relationship to patient. Code (e.g. 'S' = Self).","RelationshipToPatient":"Relationship to patient object with code, source, sourceText.","name":"Name. String. For employers/providers/guarantors.","relationToPatient":"Relationship to patient. String code.","BillingAlertText":"Custom billing alert text. String.","Custom":"Custom fields object. May contain BillingAlertText.","lastUpdated":"FHIR lastUpdated timestamp. ISO 8601.","versionId":"FHIR version ID. String.","clinicalStatus":"FHIR clinical status. String (active, resolved, etc.).","verificationStatus":"FHIR verification status. String (confirmed, unconfirmed, etc.).","medicationCodeableConcept":"FHIR medication concept. Object with coding array.","coding":"FHIR coding array. Each entry has system, code, display.","display":"Human-readable display text. String.","system":"Code system URI. String (e.g. 'http://snomed.info/sct').","onsetDateTime":"Onset date/time. ISO 8601.","recordedDate":"Recorded date. ISO 8601.","recorder":"Recorder reference. String (Practitioner/xxx).","assertedDate":"Asserted date. ISO 8601.","reaction":"Reaction array. FHIR AllergyIntolerance reaction details.","note":"Note text. String or array.","doseNumber":"Dose number. Integer.","lotNumber":"Lot number. String.","manufacturer":"Manufacturer. Object with reference.","expirationDate":"Expiration date. ISO 8601.","site":"Body site. String or object.","route":"Administration route. String or object.","method":"Method. String or object.","quantity":"Quantity. Object with value and unit.","unit":"Unit of measure. String.","valueQuantity":"FHIR value quantity. Object with value, unit, system, code.","effectiveDateTime":"Effective date/time. ISO 8601.","issued":"Issued date/time. ISO 8601.","performer":"Performer reference. Array or string.","interpretation":"Interpretation. String or array.","referenceRange":"Reference range array. Each has low, high, text.","low":"Lower bound. Object with value, unit.","high":"Upper bound. Object with value, unit.","component":"Component array. For multi-component observations (e.g. blood pressure).","basedOn":"Based-on reference. Array.","partOf":"Part-of reference. Array."
+    "subscriberKey":"ELLKAY subscriber authentication key. GUID format (e.g. 8afc9e40-ba9b-45f5-8970-40e3e9dde5d6). Required for all LKCloud endpoints.","siteServiceKey":"Site-specific service authentication key. GUID format. Identifies the practice/site connecting to the bridge. Required.","authentication":"Authentication object. Contains subscriberKey and siteServiceKey. Required for all LKCloud (non-FHIR) endpoints.","patientId":"Unique patient identifier in the source EHR. Typically a numeric string (e.g. '9324'). Discovered via SmartSearch. Required for patient-specific calls.","chartNumber":"Patient chart number - internal EHR identifier. May differ from patientId. String value.","firstName":"Patient first name. String.","lastName":"Patient last name. String.","middleName":"Patient middle name. String, may be empty.","prefix":"Name prefix (Mr., Ms., Dr., etc.). String, may be null.","suffix":"Name suffix (Jr., Sr., III, etc.). String, may be null.","preferredName":"Patient preferred name. String, may be null.","dateOfBirth":"Date of birth. Object with 'value' (/Date(epoch)/ format) and 'raw' (MM/DD/YYYY string).","sex":"Biological sex. Single character: M, F, or U (unknown).","socialSecurityNumber":"SSN. Object with 'formatted' (XXX-XX-XXXX) and 'raw' (XXXXXXXXX) fields.","race":"Race code. CDC RECIST code (e.g. '2106-3' = White).","races":"Array of race objects, each with code, source, sourceText.","ethnicity":"Ethnicity code. 'N' = Not Hispanic/Latino, 'H' = Hispanic/Latino.","ethnicities":"Array of ethnicity objects with code, source, sourceText.","language":"Preferred language. String (e.g. 'English').","maritalStatus":"Marital status code. Single character (M, S, D, W, etc.).","maritalStatusCode":"Marital status code object with code, source, sourceText.","homePhone":"Home phone number. String, may include formatting.","workPhone":"Work phone number. String.","workPhoneExt":"Work phone extension. String.","mobilePhone":"Mobile phone number. String.","email":"Email address. String.","address1":"Primary address line. String.","address2":"Secondary address line (apartment, suite, etc.). String, may be null.","city":"City. String.","state":"State abbreviation. 2-character string (e.g. 'MD').","zip":"ZIP/Postal code. String.","countryCode":"Country code. String, may be null.","deceased":"Deceased flag. Boolean or null.","deceasedDate":"Date of death. String or null.","created":"Record creation timestamp. ISO 8601 format (e.g. '2018-05-16T11:03:27').","id":"Resource identifier. Numeric string. In FHIR, the resource's logical ID.","alternatePatientId":"Alternate patient identifier. May match patientId or be a secondary ID.","patientStatus":"Patient status code. Integer (0 = active, etc.).","patientFound":"Boolean. True if a patient was found for the given patientId.","npi":"National Provider Identifier. 10-digit number. Used for providers.","upin":"Unique Physician Identification Number. String.","license":"Provider license number. String.","appointmentId":"Unique appointment identifier. Numeric string. Used with GetAppointment, EditAppointment.","start":"Start date/time. ISO 8601 with timezone (e.g. '2020-08-24T07:45:00-04:00').","duration":"Duration. HH:MM:SS format (e.g. '00:15:00').","facilityId":"Facility identifier. Numeric string or null.","facilityName":"Facility name. String or null.","notes":"Appointment or encounter notes. String.","modified":"Last modified timestamp. ISO 8601.","billable":"Billable type indicator. String.","department":"Department identifier. String.","rawStatus":"Raw status from source EHR system. String.","appointmentTypeId":"Appointment type identifier. Numeric string.","available":"Boolean. True if the bridge/service is available.","errorCode":"Error code if the request failed. String or null.","capabilities":"Bridge capability flags. Object with boolean fields (e.g. smartSearch: true).","moduleVersion":"Bridge module version. Numeric string.","deploymentDate":"Bridge deployment date. ISO 8601.","publishedDate":"Bridge published date. ISO 8601.","resourceType":"FHIR resource type. String (e.g. 'Patient', 'Observation', 'Bundle').","status":"Resource status. String (active, succeeded, completed, etc.).","code":"Coded value. May be a CDC RECIST race code, ICD code, SNOMED code, etc. See source system for code set.","source":"Source system code. String identifying the originating EHR system.","sourceText":"Human-readable source text. String.","category":"FHIR resource category. String (e.g. 'vital-signs', 'problem-list-item').","subject":"FHIR subject reference. String (e.g. 'Patient/10132').","meta":"FHIR metadata. Object with lastUpdated, versionId, etc.","entry":"FHIR Bundle entries. Array of resource objects.","total":"Total number of results in a FHIR Bundle. Integer.","type":"FHIR Bundle type. String (searchset, batch, transaction, etc.).","request":"Request wrapper object for nested LKCloud calls. Contains endpoint-specific parameters.","items":"Collection of returned items. Array.","phone":"Phone number. String.","guarantor":"Guarantor information. Object with relationToPatient, address, name, etc.","employer":"Employer information. Object with name, id, address, phone, statusText.","provider":"Primary provider. Object with id, firstName, lastName, npi, upin, license.","referringProvider":"Referring provider. Same structure as provider.","pharmacy":"Pharmacy information. Object with id.","financialResponsibleParty":"Financial responsible party. Object with name, address, DOB, relation, sex.","genderIdentities":"Array of gender identity objects with code, source, sourceText.","sexualOrientation":"Sexual orientation. String or object.","patient":"FHIR patient reference. String (e.g. '9830') or 'Patient/10132'.","account":"Account identifier. Numeric string.","context":"Encounter/context identifier. Numeric string.","staff":"Staff/practitioner identifier. Numeric string.","encounter":"Encounter identifier. Numeric string.","value":"Value field. May contain /Date(epoch)/ for dates, or a plain string.","raw":"Raw value. String representation before formatting.","formatted":"Formatted value. String (e.g. '123-65-9168' for SSN).","relationToPatient":"Relationship to patient. Code (e.g. 'S' = Self).","RelationshipToPatient":"Relationship to patient object with code, source, sourceText.","name":"Name. String. For employers/providers/guarantors.","relationToPatient":"Relationship to patient. String code.","BillingAlertText":"Custom billing alert text. String.","Custom":"Custom fields object. May contain BillingAlertText.","lastUpdated":"FHIR lastUpdated timestamp. ISO 8601.","versionId":"FHIR version ID. String.","clinicalStatus":"FHIR clinical status. String (active, resolved, etc.).","verificationStatus":"FHIR verification status. String (confirmed, unconfirmed, etc.).","medicationCodeableConcept":"FHIR medication concept. Object with coding array.","coding":"FHIR coding array. Each entry has system, code, display.","display":"Human-readable display text. String.","system":"Code system URI. String (e.g. 'http://snomed.info/sct').","onsetDateTime":"Onset date/time. ISO 8601.","recordedDate":"Recorded date. ISO 8601.","recorder":"Recorder reference. String (Practitioner/xxx).","assertedDate":"Asserted date. ISO 8601.","reaction":"Reaction array. FHIR AllergyIntolerance reaction details.","note":"Note text. String or array.","doseNumber":"Dose number. Integer.","lotNumber":"Lot number. String.","manufacturer":"Manufacturer. Object with reference.","expirationDate":"Expiration date. ISO 8601.","site":"Body site. String or object.","route":"Administration route. String or object.","method":"Method. String or object.","quantity":"Quantity. Object with value and unit.","unit":"Unit of measure. String.","valueQuantity":"FHIR value quantity. Object with value, unit, system, code.","effectiveDateTime":"Effective date/time. ISO 8601.","issued":"Issued date/time. ISO 8601.","performer":"Performer reference. Array or string.","interpretation":"Interpretation. String or array.","referenceRange":"Reference range array. Each has low, high, text.","low":"Lower bound. Object with value, unit.","high":"Upper bound. Object with value, unit.","component":"Component array. For multi-component observations (e.g. blood pressure).","basedOn":"Based-on reference. Array.","partOf":"Part-of reference. Array."
   };
   function fieldDescription(fieldName){
     var clean = String(fieldName).replace(/^"|"$/g,"").replace(/:$/,"");
     return FIELD_DICT[clean] || FIELD_DICT[clean.toLowerCase()] || null;
+  }
+
+  // ===== TRAINING MODE DATA =====
+  // Gotchas, tips, and notes for endpoints and services. Shown only in clean theme.
+  var TRAINING_DATA = {
+    // General tips shown for all endpoints
+    "_general": {
+      tips: [
+        "All LKCloud endpoints require an authentication object with subscriberKey and siteServiceKey. These are GUIDs provided by Ellkay.",
+        "FHIR endpoints (R4) use a different base URL (https://fhir.lkcloud.com/R4) and do NOT use the LKCloud authentication object. They use FHIR-standard query parameters.",
+        "patientId in LKCloud is NOT the same as chartNumber. Always use patientId for GetPatient, GetPatientSummary, etc. Use SmartSearch to discover it.",
+        "Dates in LKCloud responses use /Date(epoch-milliseconds)/ format. Dates in requests use ISO 8601 (e.g. '2021-01-18T02:00:53')."
+      ],
+      notes: []
+    },
+    "_lkcloud_general": {
+      gotchas: [
+        "patientId must come from SmartSearch or GetPatient - never guess or hardcode it. A wrong patientId returns an empty result or 404.",
+        "The authentication.subscriberKey and authentication.siteServiceKey are required on EVERY LKCloud call. Missing them returns 401.",
+        "Date ranges in LKCloud are inclusive. If you query GetEncounters with start='2024-01-01' and end='2024-01-31', you get encounters from both days.",
+        "Some endpoints return arrays that may be empty. Always check for null/empty before accessing array elements in your code."
+      ]
+    },
+    "_fhir_general": {
+      gotchas: [
+        "FHIR uses 'Patient/{id}' references, not bare patientId. When chaining from LKCloud to FHIR, strip the 'Patient/' prefix or add it as needed.",
+        "FHIR Bundle responses have a 'total' field - check it before iterating 'entry'. If total is 0, entry may be absent.",
+        "FHIR search uses query parameters (e.g. ?patient=10132), not a request body. GET requests do not have a body.",
+        "FHIR dates use ISO 8601 (YYYY-MM-DD). LKCloud uses /Date(epoch)/. Convert between them when chaining across APIs."
+      ],
+      tips: [
+        "FHIR R4 is the current version. R5 exists but Ellkay's FHIR API uses R4.",
+        "Use the _count parameter to limit FHIR search results (e.g. ?patient=10132&_count=10)."
+      ]
+    }
+  };
+
+  // Per-endpoint gotchas and tips (keyed by endpoint id)
+  TRAINING_DATA.endpoints = {
+    "lkbridge-smartsearch": {
+      gotchas: [
+        "SmartSearch query is pipe-delimited: LastName|FirstName|SSN|ChartNumber|DateOfBirth|PhoneNumber. Leave empty fields as blank between pipes (e.g. 'Doe|Jane|||03/15/1987|').",
+        "SmartSearch returns MULTIPLE matching patients, not one. Always check the patients array length and let the user pick if there are duplicates.",
+        "Searching by SSN returns the most precise match. Searching by lastName only may return dozens of results."
+      ],
+      tips: [
+        "Use SmartSearch as the FIRST step in any patient workflow - it gives you the patientId needed by all other endpoints.",
+        "The 'id' field in each result IS the patientId you pass to GetPatient, GetPatientSummary, etc."
+      ]
+    },
+    "lkbridge-getpatient": {
+      gotchas: [
+        "GetPatient requires an EXACT patientId. If the patient doesn't exist, patientFound returns false - not an error. Always check patientFound before accessing the patient object.",
+        "GetPatient returns the FULL demographics record (heavy payload). For a lighter response, use GetPatientSummary instead."
+      ],
+      tips: [
+        "The chartNumber field in the response may differ from the patientId you sent. Both are valid identifiers but serve different purposes.",
+        "Use GetPatient when you need insurance, guarantor, or emergency contact details. Use GetPatientSummary for a quick overview."
+      ]
+    },
+    "lkbridge-getpatientsummary": {
+      gotchas: [
+        "GetPatientSummary returns a nested Patient object (capital P). Access it via response.Patient, not response.patient - the casing matters!",
+        "The summary does NOT include the full insurance array. Use GetPatient for complete insurance details."
+      ]
+    },
+    "lkappointments-getappointments": {
+      gotchas: [
+        "GetAppointments requires a date range, but the range is limited to 7 days by default. For larger ranges, make multiple calls or contact Ellkay to configure.",
+        "StatusCodes filter is optional but recommended - without it, you get ALL appointments including cancelled and no-shows.",
+        "The physicianId and facilityId filters must match IDs from GetPhysicians and GetFacilities. Don't guess IDs."
+      ]
+    },
+    "lkappointments-scheduleappointment": {
+      gotchas: [
+        "ScheduleAppointment requires a valid SlotId from GetOpenAppointmentSlots. You cannot create a slot - you must book an existing one.",
+        "The patientId must exist in the EHR. Create the patient first via CreatePatient if needed.",
+        "Some EHRs require an appointmentTypeId. Get the valid types from GetAppointmentTypes first."
+      ]
+    },
+    "lkpatientdatalink-getencounters": {
+      gotchas: [
+        "GetEncounters date range is required. Without it, some EHRs return an error or an empty array.",
+        "EncounterId from GetEncounters is needed for GetEncounterNotes and GetEncounterNoteBody. Save it!"
+      ]
+    },
+    "lkpatientdatalink-getencounternotebody": {
+      gotchas: [
+        "GetEncounterNoteBody returns the note as a BASE64-encoded string in the 'Body' field. You must decode it in your code.",
+        "Some notes may be very large (50KB+). Consider paginating or truncating in your UI."
+      ]
+    },
+    "updatepatient-createpatient": {
+      gotchas: [
+        "CreatePatient requires at minimum firstName, lastName, dateOfBirth, and sex. Other fields are optional but recommended for a complete record.",
+        "The externalId field is YOUR identifier for the patient - it does NOT become the patientId. The response returns a new createdPatientId which is the EHR's internal ID.",
+        "After creating a patient, save the createdPatientId from the response - you need it for all subsequent calls (GetPatient, UpdatePatient, etc.)."
+      ],
+      tips: [
+        "Always validate the response's createdPatientId is non-empty before considering the creation successful. A null or empty ID may indicate a silent failure."
+      ]
+    },
+    "updatepatient-updatepatient": {
+      gotchas: [
+        "To REMOVE a field from the patient record, send an empty string ''. To LEAVE a field unchanged, omit it or send null. Mixing these up is the #1 UpdatePatient bug.",
+        "UpdatePatient does NOT return the updated record. To verify changes, call GetPatient afterwards.",
+        "You cannot change patientId via UpdatePatient. It's the immutable identifier."
+      ]
+    },
+    "lkpatientbalance-getbalance": {
+      gotchas: [
+        "GetBalance returns amounts as STRINGS, not numbers. Parse them with parseFloat() before doing arithmetic.",
+        "Some EHRs return 0.00 for all fields if the patient has no billing activity. This is NOT an error."
+      ]
+    },
+    "lkdocuments-getdocument": {
+      gotchas: [
+        "GetDocument returns the document as a BASE64-encoded string. Large documents (lab results, imaging reports) can be several MB.",
+        "The document 'Id' must come from GetPatientDocuments. Don't guess - invalid IDs return a 404."
+      ]
+    }
+  };
+
+  // Get training data for an endpoint (merges general + service-level + endpoint-specific)
+  function getTrainingData(ep){
+    var data = { gotchas: [], tips: [], notes: [] };
+    // general
+    (TRAINING_DATA._general.tips || []).forEach(function(t){ data.tips.push(t); });
+    (TRAINING_DATA._general.notes || []).forEach(function(n){ data.notes.push(n); });
+    // service-level
+    var svcKey = ep.service === "eCW FHIR" ? "_fhir_general" : "_lkcloud_general";
+    (TRAINING_DATA[svcKey].gotchas || []).forEach(function(g){ data.gotchas.push(g); });
+    (TRAINING_DATA[svcKey].tips || []).forEach(function(t){ data.tips.push(t); });
+    // endpoint-specific
+    var epData = TRAINING_DATA.endpoints[ep.id];
+    if(epData){
+      (epData.gotchas || []).forEach(function(g){ data.gotchas.push(g); });
+      (epData.tips || []).forEach(function(t){ data.tips.push(t); });
+    }
+    return data;
+  }
+
+  // Build inline training annotations for an endpoint.
+  // Shows the FIRST gotcha/tip as a one-line inline hint (always visible),
+  // then a "more" link that expands the rest in a compact list.
+  function buildTrainingPanel(ep){
+    var td = getTrainingData(ep);
+    var html = '';
+    // Show the first gotcha inline (most important - common mistake)
+    if(td.gotchas.length){
+      html += '<div class="training-hint th-gotcha"><strong>Gotcha:</strong> '+esc(td.gotchas[0])+'</div>';
+    }
+    // Show the first tip inline (most useful - best practice)
+    if(td.tips.length){
+      var tipIdx = td.gotchas.length > 0 ? 0 : 0; // first tip
+      html += '<div class="training-hint th-tip"><strong>Tip:</strong> '+esc(td.tips[tipIdx])+'</div>';
+    }
+    // "More" link + expandable extra items (remaining gotchas, tips, notes)
+    var extraCount = (td.gotchas.length > 1 ? td.gotchas.length - 1 : 0) + (td.tips.length > 1 ? td.tips.length - 1 : 0) + td.notes.length;
+    if(extraCount > 0){
+      html += '<span class="training-more">+'+extraCount+' more...</span>';
+      html += '<div class="training-extra">';
+      // remaining gotchas
+      for(var gi = 1; gi < td.gotchas.length; gi++){
+        html += '<div class="te-item te-gotcha">'+esc(td.gotchas[gi])+'</div>';
+      }
+      // remaining tips
+      for(var ti = 1; ti < td.tips.length; ti++){
+        html += '<div class="te-item te-tip">'+esc(td.tips[ti])+'</div>';
+      }
+      // notes
+      td.notes.forEach(function(n){ html += '<div class="te-item te-note">'+esc(n)+'</div>'; });
+      html += '</div>';
+    }
+    return html;
   }
 
   // ===== B4: CURL =====
@@ -7543,9 +7885,9 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   }
 
   // ===== STATUS / PATH =====
-  function setCrtPath(tail, tag, tagClass){ /* crt-head removed — no-op, status bar handles display */ }
+  function setCrtPath(tail, tag, tagClass){ /* crt-head removed - no-op, status bar handles display */ }
   function setStatus(ep, method, stateTxt, lat){
-    stEp.textContent = ep || "—"; stMethod.textContent = method || "—"; stState.textContent = stateTxt || "IDLE"; stLat.textContent = lat!=null ? (lat+"ms") : "—";
+    stEp.textContent = ep || "-"; stMethod.textContent = method || "-"; stState.textContent = stateTxt || "IDLE"; stLat.textContent = lat!=null ? (lat+"ms") : "-";
     var sc={IDLE:"var(--text-2)",READY:"var(--amber)",TRANSMIT:"var(--amber)",COMPLETE:"var(--green)",ERROR:"var(--red)"};
     stState.style.color = sc[stateTxt]||"var(--text-2)";
   }
@@ -7556,7 +7898,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     wrap.className = "geo-wrap";
     crtBody.appendChild(wrap);
 
-    // create canvas dynamically — avoids context conflicts
+    // create canvas dynamically - avoids context conflicts
     var canvas = document.createElement("canvas");
     canvas.id = "geoCanvas3d";
     canvas.style.display = "block";
@@ -7658,7 +8000,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       mesh.position.y = 0.2;
       scene.add(mesh);
 
-      // ---- D: WebGL text — "lkcloud://bridge" as a large dithered texture plane ----
+      // ---- D: WebGL text - "lkcloud://bridge" as a large dithered texture plane ----
       // higher-res canvas + larger plane + closer to camera for visibility
       var textCanvas = document.createElement("canvas");
       textCanvas.width = 1024; textCanvas.height = 128;
@@ -7791,6 +8133,8 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     html += '<div class="tline"><span class="t-prompt">lkcloud://bridge</span> ~$ <span class="t-method '+mc+'">'+esc((ep.method||"POST").toUpperCase())+'</span> <span class="t-url">'+esc(ep.url)+'</span></div>';
     if(ep.summary){ html += '<div class="tline t-dim">// '+esc(ep.summary)+'</div>'; }
     html += '<div class="tline">&nbsp;</div>';
+    // Training panel (only visible in clean theme via CSS)
+    html += buildTrainingPanel(ep);
     if(ep.requestSchema && ep.requestSchema.length){
       html += '<div class="tline"><button class="chip schema-toggle">▸ request schema ('+ep.requestSchema.length+' fields)</button></div>';
       html += '<div class="schema-panel" style="display:none">';
@@ -7812,11 +8156,19 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     bindRequestUI(ep, block); bindStatusPicker(ep, block); setupConfirm(ep, block); syncReqEditor(block);
     var st = block.querySelector(".schema-toggle");
     if(st) st.addEventListener("click", function(){ var p = block.querySelector(".schema-panel"); if(p) p.style.display = p.style.display === "none" ? "" : "none"; st.textContent = st.textContent.charAt(0) === "▸" ? st.textContent.replace("▸","▾") : st.textContent.replace("▾","▸"); });
+    // training "more" link click-to-expand
+    var tm = block.querySelector(".training-more");
+    if(tm) tm.addEventListener("click", function(){
+      var extra = block.querySelector(".training-extra");
+      if(extra) extra.classList.toggle("show");
+      tm.textContent = extra && extra.classList.contains("show") ? "show less" : tm.getAttribute("data-label") || ("+" + (extra ? extra.querySelectorAll(".te-item").length : 0) + " more...");
+    });
+    if(tm){ var extra = block.querySelector(".training-extra"); tm.setAttribute("data-label", tm.textContent); }
     var cb = block.querySelector(".curl-btn");
     if(cb) cb.addEventListener("click", function(){ var ed = block.querySelector(".req-editor"); copyText(curlCommand(ep, ed ? ed.value : "")).then(function(){flash("CURL COPIED");}); });
     setCrtPath(ep.name, ep.method.toUpperCase(), methodColor(ep.method));
     setStatus(ep.name, (ep.method||"POST").toUpperCase(), "READY");
-    // scroll the new block into view inside the terminal only — not the parent page
+    // scroll the new block into view inside the terminal only - not the parent page
     var cbEl = document.getElementById("crtBody");
     if(cbEl){
       var blockBottom = block.offsetTop + block.offsetHeight;
@@ -7886,7 +8238,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   function initEggAudio(){
     try{
       eggCtx = new (window.AudioContext || window.webkitAudioContext)();
-      // Decode the embedded base64 WAV (no external file needed — fully standalone)
+      // Decode the embedded base64 WAV (no external file needed - fully standalone)
       var binStr = atob(EGG_WAV_B64);
       var len = binStr.length;
       var bytes = new Uint8Array(len);
@@ -7918,7 +8270,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       var ans = document.createElement("span"); ans.className = yes ? "t-ok" : "t-err"; ans.textContent = yes ? "  y" : "  n"; cl.appendChild(ans);
     }
     if(yes){ transmit(ep, block); }
-    else { var c2 = block.querySelector(".confirm-cursor"); if(c2) c2.remove(); var a = block.querySelector(".resp-area"); var l = document.createElement("div"); l.className="tline t-dim"; l.style.marginTop="8px"; l.textContent="~$ aborted — type a new command below"; a.appendChild(l); appendResetChip(block); }
+    else { var c2 = block.querySelector(".confirm-cursor"); if(c2) c2.remove(); var a = block.querySelector(".resp-area"); var l = document.createElement("div"); l.className="tline t-dim"; l.style.marginTop="8px"; l.textContent="~$ aborted - type a new command below"; a.appendChild(l); appendResetChip(block); }
   }
 
   // ===== A5: TRANSMIT =====
@@ -7928,7 +8280,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     state.busy = true; setStatus(ep.name, (ep.method||"POST").toUpperCase(), "TRANSMIT"); setCrtPath(ep.name, "TRANSMIT", "var(--amber)");
     document.body.classList.add("transmitting");
     showEvaWarning(true);
-    // shockwave — ring emanates from the Y/N button position
+    // shockwave - ring emanates from the Y/N button position
     fireShockwave(block);
     var area = block.querySelector(".resp-area"); var t0 = performance.now();
     var html = '<div class="tline tx-line" style="margin-top:8px">» transmitting</div>';
@@ -8032,7 +8384,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     html += '<span class="t-dim">Content-Type:</span> application/json; charset=utf-8\n';
     html += '<span class="t-dim">Server:</span> LK//SIM/6.1\n<span class="t-dim">X-LK-Sim:</span> true\n<span class="t-dim">X-Response-Time:</span> '+latency+'ms\n<span class="t-dim">Date:</span> '+nowStamp()+'\n\n';
     var txt = JSON.stringify(bodyObj, null, 2);
-    if(txt.length > 24000){ txt = txt.slice(0,24000) + '\n\n… [response truncated — '+txt.length.toLocaleString()+' chars total]'; }
+    if(txt.length > 24000){ txt = txt.slice(0,24000) + '\n\n… [response truncated - '+txt.length.toLocaleString()+' chars total]'; }
     html += hlJSON(txt); html += '</div>';
     if(!isErr){
       var chains = findChainTargets(ep, bodyObj);
@@ -8098,7 +8450,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       state.busy = false;
       setupConfirm(state.selected, block);
     });
-    // no scrollIntoView — don't scroll the parent page
+    // no scrollIntoView - don't scroll the parent page
   }
 
   // ===== B2: COMMAND INPUT =====
@@ -8163,7 +8515,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
           input.value = suggestState.items[suggestState.sel].name;
           hideSuggestions();
         } else {
-          // fallback: old behavior — complete if unique prefix
+          // fallback: old behavior - complete if unique prefix
           var val = input.value.trim().toLowerCase(); if(!val) return;
           var m = ENDPOINTS.filter(function(ep){ return ep.name.toLowerCase().startsWith(val); });
           if(m.length === 1){ input.value = m[0].name; }
@@ -8218,7 +8570,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(lc === "clear" || lc === "cls"){ clearLog(); }
     else if(lc === "help" || lc === "?"){ showHelp(); }
     else if(lc.startsWith("search ") || lc.startsWith("/ ")){ var q = cmd.replace(/^(search |\/ )/i, ""); search.value = q; renderSidebar(q); echoLine("  ▸ filtered sidebar: '" + esc(q) + "'", "t-dim"); }
-    else { var ep = findEndpoint(cmd); if(ep){ selectEndpoint(ep.id); } else { echoLine("  ▌ unknown: '" + esc(cmd) + "' — type 'help' for commands", "t-err"); } }
+    else { var ep = findEndpoint(cmd); if(ep){ selectEndpoint(ep.id); } else { echoLine("  ▌ unknown: '" + esc(cmd) + "' - type 'help' for commands", "t-err"); } }
   }
   function findEndpoint(query){
     var q = query.toLowerCase();
@@ -8245,7 +8597,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
   function setupTooltips(){
     var tt = $("tooltip"); if(!tt) return;
 
-    // Collapsible JSON — delegated click handler
+    // Collapsible JSON - delegated click handler
     crtBody.addEventListener("click", function(e){
       var toggle = e.target.closest(".jk-collapse-toggle");
       if(!toggle) return;
@@ -8262,7 +8614,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         if(summary) summary.remove();
         toggle.textContent = toggle.textContent === "▶" ? "{" : (toggle.textContent === "▶" ? "[" : toggle.textContent);
       } else {
-        // collapse — count items
+        // collapse - count items
         var inner = content.textContent;
         var items = (inner.match(/,/g) || []).length + 1;
         var isObj = toggle.textContent === "{";
@@ -8305,7 +8657,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     });
 
     // request body: the transparent textarea covers the <pre> with highlighted keys.
-    // use elementFromPoint trick — temporarily disable textarea + enable pre to peek at the key underneath.
+    // use elementFromPoint trick - temporarily disable textarea + enable pre to peek at the key underneath.
     crtBody.addEventListener("mousemove", function(e){
       var editor = e.target.closest && e.target.closest(".req-editor");
       if(!editor){ return; }
@@ -8325,7 +8677,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     crtBody.addEventListener("mouseleave", hideTooltip);
   }
 
-  // ===== V2 SCRAMBLE (codrops LineTextHoverAnimations v2 — slow scramble + bg bar + animateBack) =====
+  // ===== V2 SCRAMBLE (codrops LineTextHoverAnimations v2 - slow scramble + bg bar + animateBack) =====
   var SCRAMBLE_CHARS = "abcdefghijklmnopqrstuvwxyz!@#$%^&*-_=+;:<>,".split("");
   var scrambleState = {}; // key -> { timers:[], anim:0, chars:[] }
 
@@ -8374,7 +8726,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     killScramble(key);
     s.timers = [];
 
-    // hide all chars first — they'll reveal one by one
+    // hide all chars first - they'll reveal one by one
     s.chars.forEach(function(char){ char.style.opacity = "0"; char.textContent = char.dataset.orig; char.classList.remove("scrambling"); });
 
     // v2: each char reveals one by one (staggered 40ms), flickers through 2 random chars while fading in, then settles
@@ -8382,7 +8734,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       var orig = char.dataset.orig;
       var flickerCount = 0;
       var maxFlicker = 2; // repeat: 2
-      var stagger = (pos + 1) * 40; // delay per char — slightly faster than v2's 60ms
+      var stagger = (pos + 1) * 40; // delay per char - slightly faster than v2's 60ms
 
       s.timers.push(setTimeout(function(){
         char.style.opacity = "1";
@@ -8413,7 +8765,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     var s = scrambleState[key]; if(!s) return;
     killScramble(key);
 
-    // restore all chars immediately — visible + original text
+    // restore all chars immediately - visible + original text
     s.chars.forEach(function(char){ char.style.opacity = "1"; char.textContent = char.dataset.orig; char.classList.remove("scrambling"); });
 
     // background bar animates back from current→0 over 0.5s with power4 ease
@@ -8466,7 +8818,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       if(state.confirmMode || state.busy) return;
 
       if(e.key === "/"){
-        // focus search — but not if already in an input
+        // focus search - but not if already in an input
         if(tag !== "INPUT"){
           e.preventDefault();
           search.focus();
@@ -8514,7 +8866,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     state.confirmMode = false; state.selected = ep; state.simStatus = 200;
     var sample = generateSample(ep);
     state.requestText = typeof sample === "string" ? sample : JSON.stringify(sample, null, 2);
-    // remove idle prompt + hint if present (only on FIRST selection — check for data-id-less cursor)
+    // remove idle prompt + hint if present (only on FIRST selection - check for data-id-less cursor)
     var idleCursor = crtBody.querySelector(".tline > .cursor:not(.confirm-cursor)");
     if(idleCursor && !idleCursor.closest(".session-block")){
       var idleLine = idleCursor.closest(".tline");
@@ -8553,7 +8905,19 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     if(sb) sb.style.zoom = s;
   }
   function applySbFontScale(){ var s = state.sbFontScale; if(sbList) sbList.style.fontSize = (12 * s) + "px"; var c = document.querySelector(".sb-count"); if(c) c.style.fontSize = (10 * s) + "px"; var si = document.querySelector(".sb-search input"); if(si) si.style.fontSize = (12 * s) + "px"; }
-  function applyTheme(){ document.documentElement.setAttribute("data-theme", state.theme); var b = $("themeToggle"); if(b) b.textContent = state.theme==="dark" ? "☀ light" : "☾ dark"; }
+  function applyTheme(){
+    document.documentElement.setAttribute("data-theme", state.theme);
+    // highlight the active theme button
+    ["themeDark","themeLight","themeClean"].forEach(function(id){
+      var b = $(id); if(!b) return;
+      var t = id === "themeDark" ? "dark" : (id === "themeLight" ? "light" : "clean");
+      b.classList.toggle("active", state.theme === t);
+    });
+    // show tutorial button only in clean theme
+    var tb = $("tutorialBtn"); if(tb) tb.style.display = state.theme === "clean" ? "" : "none";
+    // close tutorial if switching away from clean
+    if(state.theme !== "clean"){ closeTutorial(); }
+  }
 
   // ===== #1 COMMAND PALETTE (Ctrl+K) =====
   function setupCommandPalette(){
@@ -8678,7 +9042,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
 
   // ===== #4 INLINE JSON VALIDATION =====
   function setupJsonValidation(){
-    // delegation — watch all req-editor textareas
+    // delegation - watch all req-editor textareas
     document.addEventListener("input", function(e){
       if(!e.target.classList || !e.target.classList.contains("req-editor")) return;
       var editor = e.target;
@@ -8711,7 +9075,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       setTimeout(function(){ respBlock.classList.remove("resp-block-reveal"); }, 600);
     }
     fireDataBurst(area);
-    // scroll ONLY inside the crtBody — never the parent page
+    // scroll ONLY inside the crtBody - never the parent page
     var cb = document.getElementById("crtBody");
     if(cb){
       var block = area.closest(".session-block");
@@ -8725,7 +9089,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     }
   }
 
-  // ===== TRANSMIT SHOCKWAVE — ring emanates from the confirm line =====
+  // ===== TRANSMIT SHOCKWAVE - ring emanates from the confirm line =====
   function fireShockwave(block){
     var confirmLine = block.querySelector(".confirm-line");
     if(!confirmLine) return;
@@ -8740,7 +9104,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     setTimeout(function(){ wave.remove(); }, 800);
   }
 
-  // ===== RESPONSE DATA BURST — radial glow pulse =====
+  // ===== RESPONSE DATA BURST - radial glow pulse =====
   function fireDataBurst(area){
     var r = area.getBoundingClientRect();
     var burst = document.createElement("div");
@@ -8785,7 +9149,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         var ch = chars[Math.floor(Math.random() * chars.length)];
         var x = i * 14;
         var y = drops[i];
-        // gradient — brighter at the leading edge
+        // gradient - brighter at the leading edge
         ctx.fillStyle = Math.random() > 0.975 ? "rgba(255,200,80,1)" : "rgba(255,176,0,.7)";
         ctx.fillText(ch, x, y);
         drops[i] += 14;
@@ -8796,7 +9160,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     draw();
   }
 
-  // --- EVA targeting HUD — animated canvas targeting system ---
+  // --- EVA targeting HUD - animated canvas targeting system ---
   function setupReticle(){
     var reticle = $("evaReticle"); if(!reticle) return;
     var canvas = $("reticleCanvas"); if(!canvas) return;
@@ -8818,7 +9182,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
       angle += 0.02;
       var cx = 80, cy = 80;
 
-      // outer rotating arc segments — 4 arcs with gaps
+      // outer rotating arc segments - 4 arcs with gaps
       ctx.strokeStyle = "rgba(255,176,0,.7)";
       ctx.lineWidth = 2;
       for(var i = 0; i < 4; i++){
@@ -8840,7 +9204,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         ctx.stroke();
       }
 
-      // center crosshair — big
+      // center crosshair - big
       ctx.strokeStyle = "rgba(255,176,0,.8)";
       ctx.lineWidth = 1.5;
       ctx.beginPath();
@@ -8904,7 +9268,7 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     }
   }
 
-  // --- Random noise bursts — signal interference ---
+  // --- Random noise bursts - signal interference ---
   function startNoiseBursts(){
     function burst(){
       var noise = $("crtNoise");
@@ -8913,13 +9277,13 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
         void noise.offsetWidth;
         noise.classList.add("burst");
       }
-      // schedule next — random 3-15 seconds
+      // schedule next - random 3-15 seconds
       setTimeout(burst, 3000 + Math.random() * 12000);
     }
     setTimeout(burst, 5000);
   }
 
-  // --- EVA status readouts — corner data that updates ---
+  // --- EVA status readouts - corner data that updates ---
   function startEvaStatus(){
     var l = $("evaStatusL"), r = $("evaStatusR");
     if(!l || !r) return;
@@ -8945,6 +9309,84 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     setInterval(update, 100);
   }
 
+  // ===== TUTORIAL SYSTEM =====
+  var TUTORIAL_STEPS = [
+    {
+      title: "Welcome to LKSimv1 Training Mode",
+      body: "This guided tour walks you through the core workflow: <strong>select an endpoint, edit the request, submit, and read the response</strong>. The clean theme adds training panels with gotchas and tips that the dark/light themes don't show. Click <strong>Next</strong> to begin.",
+      selector: null
+    },
+    {
+      title: "Endpoint Catalog (Sidebar)",
+      body: "The left sidebar lists all <strong>133 endpoints</strong> across 9 service groups. Click a group header to collapse/expand it. Use the <strong>search box</strong> at the top to filter by name or URL. Try typing 'patient' to see matching endpoints.",
+      selector: "#sidebar"
+    },
+    {
+      title: "Selecting an Endpoint",
+      body: "Click any endpoint in the sidebar to load it. A new <strong>session block</strong> appears in the console with the command echo, request body, and submit controls. Try clicking <strong>SmartSearch</strong> under LKBridge.",
+      selector: "#sidebar"
+    },
+    {
+      title: "Training Panel",
+      body: "In clean theme, each session block includes a <strong>Training Panel</strong> with gotchas (orange), tips (green), and notes (blue). Read these before submitting - they cover common mistakes and best practices specific to the selected endpoint.",
+      selector: ".training-panel"
+    },
+    {
+      title: "Request Body Editor",
+      body: "The JSON request body is <strong>editable</strong>. Change patient IDs, dates, or any field. Press <strong>Tab</strong> to indent, <strong>Ctrl+Enter</strong> to submit immediately. The 'beautify' button reformats the JSON. A green 'VALID' or red error indicator shows if your JSON is well-formed.",
+      selector: ".req-wrap"
+    },
+    {
+      title: "Simulate Response Status",
+      body: "Before submitting, pick a <strong>response status code</strong>: [200] for success, [400]/[404] for client errors, [500] for server errors. This lets you rehearse error handling. The simulator generates a realistic response body for each code.",
+      selector: ".status-pick"
+    },
+    {
+      title: "Submit and Read the Response",
+      body: "Click <strong>[y]</strong> or press the <strong>y</strong> key to submit. The transmit animation runs, then the response block appears with the HTTP status line, headers, and syntax-highlighted JSON. Look for <strong>chained-call chips</strong> below the response - they let you jump to related endpoints with the patient ID pre-filled.",
+      selector: ".confirm-line"
+    },
+    {
+      title: "You're Ready!",
+      body: "You now know the core workflow. Switch to <strong>dark</strong> or <strong>light</strong> theme anytime using the buttons in the bottom-right. The training panels disappear in those themes but all functionality remains. Press <strong>Ctrl+K</strong> anytime to open the command palette for fast endpoint search.",
+      selector: null
+    }
+  ];
+  var tutorialIdx = 0;
+
+  function startTutorial(){
+    tutorialIdx = 0;
+    showTutorialStep();
+    $("tutorialOverlay").classList.add("active");
+  }
+  function closeTutorial(){
+    $("tutorialOverlay").classList.remove("active");
+  }
+  function showTutorialStep(){
+    var step = TUTORIAL_STEPS[tutorialIdx];
+    if(!step){ closeTutorial(); return; }
+    $("tuStep").textContent = "Step " + (tutorialIdx+1) + " of " + TUTORIAL_STEPS.length;
+    $("tuTitle").textContent = step.title;
+    $("tuBody").innerHTML = step.body;
+    $("tuProgress").textContent = (tutorialIdx+1) + " / " + TUTORIAL_STEPS.length;
+    $("tuBack").style.display = tutorialIdx > 0 ? "" : "none";
+    $("tuNext").textContent = tutorialIdx === TUTORIAL_STEPS.length - 1 ? "Done" : "Next";
+    $("tuNext").className = tutorialIdx === TUTORIAL_STEPS.length - 1 ? "tu-btn done" : "tu-btn next";
+    // spotlight the target element
+    var sp = $("tuSpotlight");
+    if(step.selector){
+      var el = document.querySelector(step.selector);
+      if(el){
+        var r = el.getBoundingClientRect();
+        sp.style.left = (r.left - 4) + "px";
+        sp.style.top = (r.top - 4) + "px";
+        sp.style.width = (r.width + 8) + "px";
+        sp.style.height = (r.height + 8) + "px";
+        sp.style.display = "";
+      } else { sp.style.display = "none"; }
+    } else { sp.style.display = "none"; }
+  }
+
   // ===== INIT =====
   function init(){
     sbList=$("sbList"); search=$("search"); crtBody=$("crtBody"); crtPathTail=$("crtPathTail"); crtTag=$("crtTag");
@@ -8961,12 +9403,23 @@ if (typeof window !== 'undefined') window.LK_ENDPOINTS = LK_ENDPOINTS;
     $("fontPlus").addEventListener("click", function(){ state.fontScale = Math.min(1.6, Math.round((state.fontScale + 0.1) * 100) / 100); applyFontScale(); });
     $("sbFontMinus").addEventListener("click", function(){ state.sbFontScale = Math.max(0.75, Math.round((state.sbFontScale - 0.1) * 100) / 100); applySbFontScale(); });
     $("sbFontPlus").addEventListener("click", function(){ state.sbFontScale = Math.min(1.6, Math.round((state.sbFontScale + 0.1) * 100) / 100); applySbFontScale(); });
-    $("themeToggle").addEventListener("click", function(){
+    $("themeDark").addEventListener("click", function(){ switchTheme("dark"); });
+    $("themeLight").addEventListener("click", function(){ switchTheme("light"); });
+    $("themeClean").addEventListener("click", function(){ switchTheme("clean"); });
+    function switchTheme(t){
       document.body.classList.add("theme-switching");
       setTimeout(function(){ document.body.classList.remove("theme-switching"); }, 300);
-      state.theme = state.theme==="dark" ? "light" : "dark"; applyTheme();
+      state.theme = t; applyTheme();
+    }
+    // Tutorial wiring
+    $("tutorialBtn").addEventListener("click", function(){ startTutorial(); });
+    $("tuSkip").addEventListener("click", function(){ closeTutorial(); });
+    $("tuBack").addEventListener("click", function(){ if(tutorialIdx > 0){ tutorialIdx--; showTutorialStep(); } });
+    $("tuNext").addEventListener("click", function(){
+      if(tutorialIdx < TUTORIAL_STEPS.length - 1){ tutorialIdx++; showTutorialStep(); }
+      else { closeTutorial(); }
     });
-    window.LKSIM = { state:state, endpoints:ENDPOINTS, selectEndpoint:selectEndpoint };
+    window.LKSIM = { state:state, endpoints:ENDPOINTS, selectEndpoint:selectEndpoint, startTutorial:startTutorial };
   }
   if(document.readyState === "loading"){ document.addEventListener("DOMContentLoaded", init); } else { init(); }
 })();
